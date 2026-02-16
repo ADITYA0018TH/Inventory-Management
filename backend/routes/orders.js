@@ -3,6 +3,7 @@ const router = express.Router();
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const { auth, adminOnly } = require('../middleware/auth');
+const { sendEmail } = require('../utils/email');
 
 // GET all orders (admin sees all, distributor sees own)
 router.get('/', auth, async (req, res) => {
@@ -26,7 +27,6 @@ router.post('/', auth, async (req, res) => {
     try {
         const { items } = req.body;
 
-        // Calculate total amount
         let totalAmount = 0;
         for (const item of items) {
             const product = await Product.findById(item.productId);
@@ -34,11 +34,15 @@ router.post('/', auth, async (req, res) => {
             totalAmount += product.pricePerUnit * item.quantity;
         }
 
+        const count = await Order.countDocuments();
+        const invoiceNumber = `INV-${new Date().getFullYear()}-${String(count + 1).padStart(4, '0')}`;
+
         const order = new Order({
             distributorId: req.user.id,
             items,
             totalAmount,
-            status: 'Pending'
+            status: 'Pending',
+            invoiceNumber
         });
         await order.save();
 
@@ -51,7 +55,7 @@ router.post('/', auth, async (req, res) => {
     }
 });
 
-// PUT update order status (admin only)
+// PUT update order status (admin only) — with email notification
 router.put('/:id/status', auth, adminOnly, async (req, res) => {
     try {
         const order = await Order.findByIdAndUpdate(
@@ -62,6 +66,20 @@ router.put('/:id/status', auth, adminOnly, async (req, res) => {
             .populate('distributorId', 'name companyName email')
             .populate('items.productId', 'name type pricePerUnit sku');
         if (!order) return res.status(404).json({ message: 'Order not found' });
+
+        // Send email notification (non-blocking)
+        if (order.distributorId?.email) {
+            sendEmail(
+                order.distributorId.email,
+                `Order Status Updated — ${req.body.status}`,
+                `<h2>PharmaLink Order Update</h2>
+                <p>Hi ${order.distributorId.name},</p>
+                <p>Your order <strong>${order.invoiceNumber || order._id}</strong> has been updated to: <strong>${req.body.status}</strong></p>
+                <p>Total: ₹${order.totalAmount?.toLocaleString()}</p>
+                <p>— PharmaLink Team</p>`
+            ).catch(err => console.error('Email send failed:', err));
+        }
+
         res.json(order);
     } catch (err) {
         res.status(500).json({ message: 'Server error', error: err.message });
@@ -82,6 +100,58 @@ router.put('/:id/assign-batch', auth, adminOnly, async (req, res) => {
             .populate('distributorId', 'name companyName email')
             .populate('items.productId', 'name type pricePerUnit sku');
         res.json(populated);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error', error: err.message });
+    }
+});
+
+// PUT add tracking milestone
+router.put('/:id/tracking', auth, adminOnly, async (req, res) => {
+    try {
+        const { status, location, note } = req.body;
+        const order = await Order.findById(req.params.id);
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+
+        order.tracking.push({ status, location, note, timestamp: Date.now() });
+        await order.save();
+
+        const populated = await Order.findById(order._id)
+            .populate('distributorId', 'name companyName email')
+            .populate('items.productId', 'name type pricePerUnit sku');
+        res.json(populated);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error', error: err.message });
+    }
+});
+
+// GET invoice data for an order
+router.get('/:id/invoice', auth, async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id)
+            .populate('distributorId', 'name companyName email phone address gstNumber')
+            .populate('items.productId', 'name type pricePerUnit sku');
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+
+        if (req.user.role === 'distributor' && order.distributorId._id.toString() !== req.user.id) {
+            return res.status(403).json({ message: 'Forbidden' });
+        }
+
+        res.json({
+            invoiceNumber: order.invoiceNumber || `INV-${order._id.toString().slice(-6).toUpperCase()}`,
+            orderDate: order.orderDate,
+            distributor: order.distributorId,
+            items: order.items.map(i => ({
+                name: i.productId?.name,
+                sku: i.productId?.sku,
+                type: i.productId?.type,
+                quantity: i.quantity,
+                unitPrice: i.productId?.pricePerUnit,
+                total: i.quantity * (i.productId?.pricePerUnit || 0),
+                batchId: i.batchId
+            })),
+            totalAmount: order.totalAmount,
+            status: order.status
+        });
     } catch (err) {
         res.status(500).json({ message: 'Server error', error: err.message });
     }

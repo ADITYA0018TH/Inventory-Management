@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
-import { FiPlus } from 'react-icons/fi';
+import { FiPlus, FiCheck, FiX, FiPrinter, FiDownload } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 export default function Batches() {
@@ -40,13 +40,25 @@ export default function Batches() {
         } catch { toast.error('Status update failed'); }
     };
 
+    const exportCSV = () => {
+        window.open('http://localhost:5000/api/export/batches', '_blank');
+    };
+
     const statusColors = { 'In Production': 'badge-blue', 'Quality Check': 'badge-amber', 'Released': 'badge-green', 'Shipped': 'badge-purple' };
 
     return (
         <div className="page">
             <div className="page-header">
-                <div><h1>Batch Manufacturing</h1><p>Create batches and track production</p></div>
-                <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}><FiPlus /> Create Batch</button>
+                <div>
+                    <h1>Batch Management</h1>
+                    <p>Track production batches and expiry dates</p>
+                </div>
+                <div className="header-actions">
+                    <button className="btn btn-secondary" onClick={exportCSV}><FiDownload /> Export CSV</button>
+                    <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+                        <FiPlus /> Create Batch
+                    </button>
+                </div>
             </div>
 
             {showForm && (

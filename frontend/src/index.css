@@ -1827,3 +1827,247 @@ body {
         right: -40px;
     }
 }
+/* ========== NEW FEATURES STYLES ========== */
+
+/* MESSAGES / CHAT UI */
+.chat-container {
+    display: flex;
+    height: calc(100vh - 140px);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.chat-sidebar {
+    width: 300px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-search {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.chat-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.chat-item {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.chat-item:hover, .chat-item.active {
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.chat-user-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.chat-preview {
+    font-size: 13px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.message {
+    max-width: 70%;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.message.sent {
+    align-self: flex-end;
+    background: var(--accent);
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.message.received {
+    align-self: flex-start;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 4px;
+}
+
+.chat-input-area {
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 12px;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 10px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+}
+
+/* TRACKING TIMELINE */
+.tracking-timeline {
+    position: relative;
+    padding: 20px 0 20px 20px;
+    border-left: 2px solid var(--border);
+    margin-left: 20px;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: -29px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-card);
+}
+
+.timeline-dot.completed {
+    background: var(--success);
+}
+
+.timeline-dot.pending {
+    background: var(--text-muted);
+}
+
+.timeline-content {
+    background: var(--bg-input);
+    padding: 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+}
+
+.timeline-date {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.timeline-status {
+    font-weight: 600;
+    color: var(--accent);
+}
+
+/* INVOICE MODAL */
+.invoice-modal {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm;
+    background: white;
+    color: #333;
+    margin: 0 auto;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    .invoice-modal, .invoice-modal * {
+        visibility: visible;
+    }
+    .invoice-modal {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+    .app-layout {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        position: fixed;
+        left: -260px;
+        top: 0;
+        bottom: 0;
+        z-index: 1000;
+        transition: left 0.3s ease;
+    }
+    
+    .sidebar.open {
+        left: 0;
+    }
+    
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 900;
+        display: none;
+    }
+    
+    .sidebar.open + .sidebar-overlay {
+        display: block;
+    }
+    
+    .main-wrapper {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mobile-toggle {
+        display: block;
+    }
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+}

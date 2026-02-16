@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const dotenv = require('dotenv');
+const QRCode = require('qrcode');
 
 const User = require('./models/User');
 const RawMaterial = require('./models/RawMaterial');
@@ -225,6 +226,8 @@ async function seed() {
                 batchMap[b.batchId] = exists._id;
                 continue;
             }
+            const qrData = JSON.stringify({ batchId: b.batchId, product: b.sku, mfg: b.mfgDate, exp: b.expDate });
+            const qrCodeImage = await QRCode.toDataURL(qrData);
             const created = await Batch.create({
                 batchId: b.batchId,
                 productId: productMap[b.sku],
@@ -232,7 +235,7 @@ async function seed() {
                 mfgDate: new Date(b.mfgDate),
                 expDate: new Date(b.expDate),
                 status: b.status,
-                qrCodeData: JSON.stringify({ batchId: b.batchId, product: b.sku, mfg: b.mfgDate, exp: b.expDate })
+                qrCodeData: qrCodeImage
             });
             console.log(`   ✅ ${b.batchId} — ${b.quantityProduced} units (${b.status})`);
             batchMap[b.batchId] = created._id;

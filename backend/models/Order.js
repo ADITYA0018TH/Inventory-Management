@@ -5,14 +5,21 @@ const OrderSchema = new mongoose.Schema({
     items: [{
         productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
         quantity: { type: Number, required: true },
-        batchId: { type: String } // Filled by Admin when fulfilling order
+        batchId: { type: String }
     }],
     totalAmount: { type: Number },
     status: {
         type: String,
-        enum: ['Pending', 'Approved', 'Shipped', 'Delivered'],
+        enum: ['Pending', 'Approved', 'Shipped', 'Delivered', 'Cancelled'],
         default: 'Pending'
     },
+    invoiceNumber: { type: String },
+    tracking: [{
+        status: { type: String, required: true },
+        location: { type: String },
+        timestamp: { type: Date, default: Date.now },
+        note: { type: String }
+    }],
     orderDate: { type: Date, default: Date.now }
 });
 

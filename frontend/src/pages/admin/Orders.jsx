@@ -1,67 +1,212 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
+import { FiCheck, FiTruck, FiX, FiBox, FiFileText, FiDownload } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 export default function AdminOrders() {
     const [orders, setOrders] = useState([]);
+    const [batches, setBatches] = useState([]);
+    const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+    const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [selectedItemIndex, setSelectedItemIndex] = useState(null);
+    const [selectedBatchId, setSelectedBatchId] = useState('');
+    const [invoiceData, setInvoiceData] = useState(null);
 
-    useEffect(() => { loadOrders(); }, []);
-    const loadOrders = async () => {
-        try { const res = await API.get('/orders'); setOrders(res.data); }
-        catch { toast.error('Failed to load orders'); }
+    useEffect(() => {
+        loadData();
+    }, []);
+
+    const loadData = async () => {
+        try {
+            const [ordersRes, batchesRes] = await Promise.all([API.get('/orders'), API.get('/batches')]);
+            setOrders(ordersRes.data);
+            setBatches(batchesRes.data);
+        } catch (err) {
+            toast.error('Failed to load data');
+        }
     };
 
     const updateStatus = async (id, status) => {
         try {
             await API.put(`/orders/${id}/status`, { status });
-            toast.success(`Order ${status.toLowerCase()}`);
-            loadOrders();
-        } catch { toast.error('Update failed'); }
+            toast.success(`Order ${status}`);
+            loadData();
+        } catch (err) {
+            toast.error('Update failed');
+        }
     };
 
-    const statusColors = { Pending: 'badge-amber', Approved: 'badge-blue', Shipped: 'badge-purple', Delivered: 'badge-green' };
+    const handleAssignBatch = async () => {
+        try {
+            await API.put(`/orders/${selectedOrder._id}/assign-batch`, {
+                itemIndex: selectedItemIndex,
+                batchId: selectedBatchId
+            });
+            toast.success('Batch assigned');
+            setIsAssignModalOpen(false);
+            loadData();
+        } catch (err) {
+            toast.error('Assignment failed');
+        }
+    };
+
+    const openAssign = (order, index) => {
+        setSelectedOrder(order);
+        setSelectedItemIndex(index);
+        setIsAssignModalOpen(true);
+    };
+
+    const viewInvoice = async (order) => {
+        try {
+            const res = await API.get(`/orders/${order._id}/invoice`);
+            setInvoiceData(res.data);
+            setIsInvoiceOpen(true);
+        } catch (err) {
+            toast.error('Failed to load invoice');
+        }
+    };
+
+    const printInvoice = () => {
+        window.print();
+    };
+
+    const exportCSV = () => {
+        window.open('http://localhost:5000/api/export/orders', '_blank');
+    };
 
     return (
         <div className="page">
-            <div className="page-header"><div><h1>Order Management</h1><p>View and manage incoming orders from distributors</p></div></div>
-
-            <div className="card">
-                <table className="data-table">
-                    <thead>
-                        <tr><th>Order ID</th><th>Distributor</th><th>Items</th><th>Total</th><th>Date</th><th>Status</th><th>Actions</th></tr>
-                    </thead>
-                    <tbody>
-                        {orders.map(o => (
-                            <tr key={o._id}>
-                                <td className="td-bold">#{o._id.slice(-6).toUpperCase()}</td>
-                                <td>
-                                    <div>{o.distributorId?.name}</div>
-                                    <small className="text-muted">{o.distributorId?.companyName}</small>
-                                </td>
-                                <td>
-                                    {o.items.map((item, i) => (
-                                        <div key={i} className="order-item-line">
-                                            {item.productId?.name} × {item.quantity}
-                                        </div>
-                                    ))}
-                                </td>
-                                <td className="td-bold">₹{o.totalAmount?.toLocaleString()}</td>
-                                <td>{new Date(o.orderDate).toLocaleDateString()}</td>
-                                <td><span className={`badge ${statusColors[o.status]}`}>{o.status}</span></td>
-                                <td>
-                                    <select className="status-select" value={o.status} onChange={e => updateStatus(o._id, e.target.value)}>
-                                        <option value="Pending">Pending</option>
-                                        <option value="Approved">Approved</option>
-                                        <option value="Shipped">Shipped</option>
-                                        <option value="Delivered">Delivered</option>
-                                    </select>
-                                </td>
-                            </tr>
-                        ))}
-                        {orders.length === 0 && <tr><td colSpan="7" className="empty-table">No orders yet</td></tr>}
-                    </tbody>
-                </table>
+            <div className="page-header">
+                <h1>Order Management</h1>
+                <button className="btn btn-secondary" onClick={exportCSV}><FiDownload /> Export CSV</button>
             </div>
+
+            <div className="grid-list">
+                {orders.map(o => (
+                    <div key={o._id} className="card order-card">
+                        <div className="card-header">
+                            <div>
+                                <h3>{o.invoiceNumber || o._id.slice(-6)}</h3>
+                                <span className="text-sm text-muted">{new Date(o.orderDate).toLocaleString()}</span>
+                            </div>
+                            <span className={`status-badge ${o.status.toLowerCase()}`}>{o.status}</span>
+                        </div>
+                        <div className="card-body">
+                            <p><strong>Distributor:</strong> {o.distributorId?.companyName || o.distributorId?.name}</p>
+                            <div className="order-items">
+                                {o.items.map((item, i) => (
+                                    <div key={i} className="order-item">
+                                        <span>{item.productId?.name} x {item.quantity}</span>
+                                        {item.batchId ? (
+                                            <span className="badge badge-blue">{item.batchId}</span>
+                                        ) : (
+                                            o.status === 'Pending' && (
+                                                <button className="btn-xs btn-outline" onClick={() => openAssign(o, i)}>Assign Batch</button>
+                                            )
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="total-amount">Total: ₹{o.totalAmount?.toLocaleString()}</div>
+                        </div>
+                        <div className="card-footer">
+                            <button className="btn-icon" onClick={() => viewInvoice(o)} title="View Invoice"><FiFileText /></button>
+                            {o.status === 'Pending' && (
+                                <>
+                                    <button className="btn-icon success" onClick={() => updateStatus(o._id, 'Approved')}><FiCheck /></button>
+                                    <button className="btn-icon danger" onClick={() => updateStatus(o._id, 'Cancelled')}><FiX /></button>
+                                </>
+                            )}
+                            {o.status === 'Approved' && (
+                                <button className="btn btn-primary" onClick={() => updateStatus(o._id, 'Shipped')}><FiTruck /> Ship Order</button>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {isAssignModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h2>Assign Batch</h2>
+                        <select onChange={e => setSelectedBatchId(e.target.value)} className="input-full mb-4">
+                            <option value="">Select Batch...</option>
+                            {batches.filter(b => b.status === 'Released').map(b => (
+                                <option key={b._id} value={b.batchId}>{b.batchId} ({b.quantityProduced} units)</option>
+                            ))}
+                        </select>
+                        <div className="form-actions">
+                            <button className="btn btn-secondary" onClick={() => setIsAssignModalOpen(false)}>Cancel</button>
+                            <button className="btn btn-primary" onClick={handleAssignBatch}>Assign</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {isInvoiceOpen && invoiceData && (
+                <div className="modal-overlay" onClick={() => setIsInvoiceOpen(false)}>
+                    <div className="invoice-modal" onClick={e => e.stopPropagation()}>
+                        <div className="invoice-header">
+                            <div>
+                                <h1>INVOICE</h1>
+                                <p>#{invoiceData.invoiceNumber}</p>
+                            </div>
+                            <div className="text-right">
+                                <h2>PharmaLink</h2>
+                                <p>123 Pharma Park, Ind Area</p>
+                                <p>Mumbai, MH 400001</p>
+                            </div>
+                        </div>
+                        <hr />
+                        <div className="invoice-details grid-2">
+                            <div>
+                                <h4>Bill To:</h4>
+                                <p>{invoiceData.distributor?.companyName}</p>
+                                <p>{invoiceData.distributor?.name}</p>
+                                <p>{invoiceData.distributor?.address}</p>
+                                <p>GST: {invoiceData.distributor?.gstNumber || 'N/A'}</p>
+                            </div>
+                            <div className="text-right">
+                                <p><strong>Date:</strong> {new Date(invoiceData.orderDate).toLocaleDateString()}</p>
+                                <p><strong>Status:</strong> {invoiceData.status}</p>
+                            </div>
+                        </div>
+                        <table className="invoice-table mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Batch</th>
+                                    <th>Qty</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {invoiceData.items.map((item, i) => (
+                                    <tr key={i}>
+                                        <td>{item.name} <small>({item.sku})</small></td>
+                                        <td>{item.batchId || '-'}</td>
+                                        <td>{item.quantity}</td>
+                                        <td>₹{item.unitPrice}</td>
+                                        <td>₹{item.total}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colSpan="4" className="text-right"><strong>Grand Total:</strong></td>
+                                    <td><strong>₹{invoiceData.totalAmount?.toLocaleString()}</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <div className="invoice-footer mt-8 text-center no-print">
+                            <button className="btn btn-primary" onClick={printInvoice}>Print Invoice</button>
+                            <button className="btn btn-secondary ml-2" onClick={() => setIsInvoiceOpen(false)}>Close</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

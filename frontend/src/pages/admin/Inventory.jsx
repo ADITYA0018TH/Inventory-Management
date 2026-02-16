@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
-import { FiPlus, FiEdit2, FiTrash2, FiArrowUp } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiTrash2, FiArrowUp, FiDownload } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 export default function Inventory() {
@@ -54,6 +54,10 @@ export default function Inventory() {
     const startEdit = (m) => { setForm({ name: m.name, unit: m.unit, currentStock: m.currentStock, minimumThreshold: m.minimumThreshold, supplier: m.supplier || '' }); setEditing(m._id); setShowForm(true); };
     const resetForm = () => { setForm({ name: '', unit: 'kg', currentStock: 0, minimumThreshold: 10, supplier: '' }); setEditing(null); setShowForm(false); };
 
+    const exportCSV = () => {
+        window.open('http://localhost:5000/api/export/inventory', '_blank');
+    };
+
     return (
         <div className="page">
             <div className="page-header">
@@ -61,9 +65,12 @@ export default function Inventory() {
                     <h1>Raw Materials Inventory</h1>
                     <p>Manage your raw materials and stock levels</p>
                 </div>
-                <button className="btn btn-primary" onClick={() => { resetForm(); setShowForm(!showForm); }}>
-                    <FiPlus /> Add Material
-                </button>
+                <div className="header-actions">
+                    <button className="btn btn-secondary" onClick={exportCSV}><FiDownload /> Export CSV</button>
+                    <button className="btn btn-primary" onClick={() => { resetForm(); setShowForm(!showForm); }}>
+                        <FiPlus /> Add Material
+                    </button>
+                </div>
             </div>
 
             {showForm && (

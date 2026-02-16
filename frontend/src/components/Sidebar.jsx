@@ -1,9 +1,9 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FiHome, FiPackage, FiLayers, FiShoppingCart, FiBox, FiLogOut, FiUser, FiSearch, FiUsers, FiFileText, FiSettings } from 'react-icons/fi';
+import { FiHome, FiPackage, FiLayers, FiShoppingCart, FiBox, FiLogOut, FiUser, FiSearch, FiUsers, FiFileText, FiSettings, FiTruck, FiAlertTriangle, FiMessageSquare, FiClock } from 'react-icons/fi';
 import ThemeToggle from './ThemeToggle';
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
     const { user, logout } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
@@ -14,61 +14,99 @@ export default function Sidebar() {
     };
 
     const adminLinks = [
-        { to: '/admin/dashboard', label: 'Dashboard', icon: <FiHome /> },
-        { to: '/admin/inventory', label: 'Raw Materials', icon: <FiBox /> },
-        { to: '/admin/products', label: 'Products', icon: <FiPackage /> },
-        { to: '/admin/batches', label: 'Batches', icon: <FiLayers /> },
-        { to: '/admin/orders', label: 'Orders', icon: <FiShoppingCart /> },
-        { to: '/admin/users', label: 'User Management', icon: <FiUsers /> },
-        { to: '/admin/audit-log', label: 'Audit Log', icon: <FiFileText /> },
+        {
+            group: 'Overview', items: [
+                { to: '/admin/dashboard', label: 'Dashboard', icon: <FiHome /> },
+                { to: '/admin/reports', label: 'Reports', icon: <FiFileText /> },
+            ]
+        },
+        {
+            group: 'Inventory', items: [
+                { to: '/admin/inventory', label: 'Raw Materials', icon: <FiBox /> },
+                { to: '/admin/products', label: 'Products', icon: <FiPackage /> },
+                { to: '/admin/batches', label: 'Batches', icon: <FiLayers /> },
+                { to: '/admin/suppliers', label: 'Suppliers', icon: <FiUsers /> },
+            ]
+        },
+        {
+            group: 'Operations', items: [
+                { to: '/admin/orders', label: 'Orders', icon: <FiShoppingCart /> },
+                { to: '/admin/quality', label: 'Quality Control', icon: <FiSearch /> },
+                { to: '/admin/shipping', label: 'Shipment Tracking', icon: <FiTruck /> },
+                { to: '/admin/returns', label: 'Returns', icon: <FiAlertTriangle /> },
+            ]
+        },
+        {
+            group: 'System', items: [
+                { to: '/messages', label: 'Messages', icon: <FiMessageSquare /> },
+                { to: '/admin/users', label: 'User Management', icon: <FiUser /> },
+                { to: '/admin/audit-log', label: 'Audit Log', icon: <FiClock /> },
+            ]
+        }
     ];
 
     const distributorLinks = [
-        { to: '/distributor/catalog', label: 'Product Catalog', icon: <FiPackage /> },
-        { to: '/distributor/orders', label: 'My Orders', icon: <FiShoppingCart /> },
-        { to: '/distributor/verify', label: 'Verify Batch', icon: <FiSearch /> },
+        {
+            group: 'Menu', items: [
+                { to: '/distributor/catalog', label: 'Product Catalog', icon: <FiPackage /> },
+                { to: '/distributor/orders', label: 'My Orders', icon: <FiShoppingCart /> },
+                { to: '/distributor/returns', label: 'My Returns', icon: <FiAlertTriangle /> },
+                { to: '/distributor/verify', label: 'Verify Batch', icon: <FiSearch /> },
+                { to: '/messages', label: 'Messages', icon: <FiMessageSquare /> },
+            ]
+        }
     ];
 
-    const links = user?.role === 'admin' ? adminLinks : distributorLinks;
+    const roleLinks = user?.role === 'admin' ? adminLinks : distributorLinks;
 
     return (
-        <aside className="sidebar">
-            <div className="sidebar-header">
-                <div className="sidebar-logo">
-                    <img src="/src/assets/logo.png" alt="PharmaLink" className="logo-icon" />
-                    <h1>PharmaLink</h1>
-                </div>
-            </div>
-
-            <nav className="sidebar-nav">
-                {links.map(link => (
-                    <Link
-                        key={link.to}
-                        to={link.to}
-                        className={`nav-link ${location.pathname === link.to ? 'active' : ''}`}
-                    >
-                        <span className="nav-icon">{link.icon}</span>
-                        <span>{link.label}</span>
-                    </Link>
-                ))}
-            </nav>
-
-            <div className="sidebar-footer">
-                <ThemeToggle />
-                <div className="user-info">
-                    <div className="user-avatar"><FiUser /></div>
-                    <div className="user-details">
-                        <span className="user-name">{user?.name}</span>
-                        <span className="user-role">{user?.role}</span>
+        <>
+            <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+                <div className="sidebar-header">
+                    <div className="sidebar-logo">
+                        <img src="/src/assets/logo.png" alt="PharmaLink" className="logo-icon" />
+                        <h1>PharmaLink</h1>
                     </div>
+                    <button className="mobile-close" onClick={onClose}>&times;</button>
                 </div>
-                <Link to="/profile" className="profile-link">
-                    <FiSettings /> <span>Profile</span>
-                </Link>
-                <button className="logout-btn" onClick={handleLogout}>
-                    <FiLogOut /> <span>Logout</span>
-                </button>
-            </div>
-        </aside>
+
+                <nav className="sidebar-nav">
+                    {roleLinks.map((group, i) => (
+                        <div key={i} className="nav-group">
+                            <div className="nav-group-title">{group.group}</div>
+                            {group.items.map(link => (
+                                <Link
+                                    key={link.to}
+                                    to={link.to}
+                                    className={`nav-link ${location.pathname === link.to ? 'active' : ''}`}
+                                    onClick={onClose}
+                                >
+                                    <span className="nav-icon">{link.icon}</span>
+                                    <span>{link.label}</span>
+                                </Link>
+                            ))}
+                        </div>
+                    ))}
+                </nav>
+
+                <div className="sidebar-footer">
+                    <ThemeToggle />
+                    <div className="user-info">
+                        <div className="user-avatar"><FiUser /></div>
+                        <div className="user-details">
+                            <span className="user-name">{user?.name}</span>
+                            <span className="user-role">{user?.role}</span>
+                        </div>
+                    </div>
+                    <Link to="/profile" className="profile-link" onClick={onClose}>
+                        <FiSettings /> <span>Profile</span>
+                    </Link>
+                    <button className="logout-btn" onClick={handleLogout}>
+                        <FiLogOut /> <span>Logout</span>
+                    </button>
+                </div>
+            </aside>
+            <div className={`sidebar-overlay ${isOpen ? 'open' : ''}`} onClick={onClose}></div>
+        </>
     );
 }

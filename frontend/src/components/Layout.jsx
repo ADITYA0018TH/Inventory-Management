@@ -1,15 +1,22 @@
+import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import SearchBar from './SearchBar';
 import NotificationBell from './NotificationBell';
 import SessionTimeout from './SessionTimeout';
+import { FiMenu } from 'react-icons/fi';
 
 export default function Layout() {
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
     return (
         <div className="app-layout">
-            <Sidebar />
+            <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
             <div className="main-wrapper">
                 <header className="top-bar">
+                    <button className="mobile-toggle" onClick={() => setIsSidebarOpen(true)}>
+                        <FiMenu />
+                    </button>
                     <SearchBar />
                     <div className="top-bar-actions">
                         <NotificationBell />

@@ -12,9 +12,16 @@ import Batches from './pages/admin/Batches';
 import AdminOrders from './pages/admin/Orders';
 import UserManagement from './pages/admin/UserManagement';
 import AuditLog from './pages/admin/AuditLog';
+import Reports from './pages/admin/Reports';
+import Suppliers from './pages/admin/Suppliers';
+import AdminReturns from './pages/admin/Returns';
+import QualityControl from './pages/admin/QualityControl';
+import ShipmentTracking from './pages/admin/ShipmentTracking';
 import Catalog from './pages/distributor/Catalog';
 import DistributorOrders from './pages/distributor/Orders';
 import VerifyBatch from './pages/distributor/VerifyBatch';
+import DistributorReturns from './pages/distributor/Returns';
+import Messages from './pages/Messages';
 import Profile from './pages/Profile';
 import './index.css';
 
@@ -31,10 +38,15 @@ function AppRoutes() {
       {/* Admin Routes */}
       <Route path="/admin" element={<ProtectedRoute role="admin"><Layout /></ProtectedRoute>}>
         <Route path="dashboard" element={<Dashboard />} />
+        <Route path="reports" element={<Reports />} />
         <Route path="inventory" element={<Inventory />} />
         <Route path="products" element={<Products />} />
         <Route path="batches" element={<Batches />} />
+        <Route path="suppliers" element={<Suppliers />} />
         <Route path="orders" element={<AdminOrders />} />
+        <Route path="quality" element={<QualityControl />} />
+        <Route path="shipping" element={<ShipmentTracking />} />
+        <Route path="returns" element={<AdminReturns />} />
         <Route path="users" element={<UserManagement />} />
         <Route path="audit-log" element={<AuditLog />} />
       </Route>
@@ -43,12 +55,14 @@ function AppRoutes() {
       <Route path="/distributor" element={<ProtectedRoute role="distributor"><Layout /></ProtectedRoute>}>
         <Route path="catalog" element={<Catalog />} />
         <Route path="orders" element={<DistributorOrders />} />
+        <Route path="returns" element={<DistributorReturns />} />
         <Route path="verify" element={<VerifyBatch />} />
       </Route>
 
       {/* Shared Routes */}
-      <Route path="/profile" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-        <Route index element={<Profile />} />
+      <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+        <Route path="messages" element={<Messages />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/login" />} />
