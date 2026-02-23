@@ -72,7 +72,7 @@ export default function AdminOrders() {
     };
 
     const exportCSV = () => {
-        window.open('http://localhost:5000/api/export/orders', '_blank');
+        window.open('http://localhost:5001/api/export/orders', '_blank');
     };
 
     return (

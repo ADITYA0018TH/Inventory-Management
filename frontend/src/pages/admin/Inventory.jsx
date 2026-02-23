@@ -55,7 +55,7 @@ export default function Inventory() {
     const resetForm = () => { setForm({ name: '', unit: 'kg', currentStock: 0, minimumThreshold: 10, supplier: '' }); setEditing(null); setShowForm(false); };
 
     const exportCSV = () => {
-        window.open('http://localhost:5000/api/export/inventory', '_blank');
+        window.open('http://localhost:5001/api/export/inventory', '_blank');
     };
 
     return (

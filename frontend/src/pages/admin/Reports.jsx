@@ -30,7 +30,7 @@ export default function Reports() {
 
     const downloadReport = (type) => {
         // Implementation for downloading specific chart data as CSV
-        window.open(`http://localhost:5000/api/export/${type}`, '_blank');
+        window.open(`http://localhost:5001/api/export/${type}`, '_blank');
     };
 
     return (

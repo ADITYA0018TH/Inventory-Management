@@ -1,0 +1,94 @@
+
+# 🎥 Project Demo Script & Walkthrough
+
+This guide is designed to help you execute a flawless presentation of **PharmaLink** to your guide/college.
+
+## 🚀 1. Setup Before Presentation
+Run these commands **15 minutes before** your demo to ensure everything is fresh.
+
+### Terminal 1 (Backend)
+```bash
+cd backend
+npm install
+node seed.js  # ⚠️ RUN THIS to reset the database and create Admin/Distributor users!
+npm start     # or npm run dev
+```
+
+### Terminal 2 (Frontend)
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+---
+
+## 🔑 Login Credentials (From Seed Data)
+**Write these down or have this file open during the demo!**
+
+| Role | Email | Password | Key Features to Show |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin@pharmalink.com` | `Admin@123` | Inventory, Batches, Order Approval, Quality Control |
+| **Distributor** | `distributor@pharmalink.com` | `Distributor@123` | Product Catalog, Placing Orders, Tracking |
+
+---
+
+## 🎬 Part 1: The "Admin" Flow (5 Minutes)
+**Context:** "First, I will log in as the Administrator to manage the supply chain and manufacturing."
+
+1.  **Login:** Enter `admin@pharmalink.com` / `Admin@123`.
+2.  **Dashboard:**
+    *   *Action:* Point to the "Total Revenue" and "Recent Orders" cards.
+    *   *Talking Point:* "The dashboard gives a real-time overview of the business, aggregating data from MongoDB using aggregation pipelines."
+3.  **Inventory (Raw Materials):**
+    *   *Action:* Go to **Inventory** sidebar. Click on "Add Material".
+    *   *Demo:* Add a new material (e.g., "Vitamin C Powder", 100kg).
+    *   *Talking Point:* "We track raw material stock levels. You can see the 'Low Stock' indicators which help in procurement planning."
+4.  **Batch Management:**
+    *   *Action:* Go to **Batches**.
+    *   *Demo:* Show the list of batches. Point out the "Expiry Date" and "Status" (Released vs Quality Check).
+    *   *Talking Point:* "Traceability is key in Pharma. Each batch is linked to specific raw materials and has a QR code generated for tracking."
+5.  **Quality Control:**
+    *   *Action:* Go to **Quality Control**.
+    *   *Demo:* Approve a "Pending" batch.
+    *   *Talking Point:* "This ensures only safe products are released to the market."
+
+---
+
+## 🎬 Part 2: The "Distributor" Flow (3 Minutes)
+**Context:** "Now, I will switch roles to a Distributor who wants to buy our products."
+
+1.  **Logout & Switch:** Log out of Admin. Log in as `distributor@pharmalink.com` / `Distributor@123`.
+2.  **Catalog:**
+    *   *Action:* Go to **Catalog**.
+    *   *Demo:* Add "ParaCure 500mg" (Qty: 500) and "AmoxiShield" to the cart.
+    *   *Talking Point:* "Distributors see live product availability and pricing."
+3.  **Place Order:**
+    *   *Action:* Proceed to checkout and place the order.
+    *   *Result:* You should see a success message and an Invoice ID.
+4.  **Track Order:**
+    *   *Action:* Go to **My Orders**.
+    *   *Demo:* Click on the order you just placed. Show the "Pending" status.
+    *   *Talking Point:* "Distributors can track the status of their shipments in real-time."
+
+---
+
+## 🎬 Part 3: Assessing the Order (2 Minutes)
+**Context:** "Finally, back as Admin to process the order."
+
+1.  **Login:** Back to `admin@pharmalink.com`.
+2.  **Manage Orders:**
+    *   *Action:* Go to **Orders**. Find the new order (Status: Pending).
+3.  **Process:**
+    *   *Action:* Change status to **Approved** -> **Shipped**.
+    *   *Talking Point:* "The system updates the inventory and notifies the distributor automatically."
+4.  **Reports (Optional):**
+    *   *Action:* Go to **Reports** or **Audit Log**.
+    *   *Talking Point:* "Every action is logged for security and auditing compliance."
+
+---
+
+## 💡 Technical Highlights to Mention
+*   **Security:** "Passwords are hashed using `bcrypt` and sessions use `JWT`."
+*   **Architecture:** "I used the MERN stack for scalability."
+*   **Database:** "MongoDB allows flexible schemas for different product formulas."

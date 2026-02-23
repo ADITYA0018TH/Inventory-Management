@@ -41,7 +41,7 @@ export default function Batches() {
     };
 
     const exportCSV = () => {
-        window.open('http://localhost:5000/api/export/batches', '_blank');
+        window.open('http://localhost:5001/api/export/batches', '_blank');
     };
 
     const statusColors = { 'In Production': 'badge-blue', 'Quality Check': 'badge-amber', 'Released': 'badge-green', 'Shipped': 'badge-purple' };
