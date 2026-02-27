@@ -3,6 +3,7 @@ import API from '../../api';
 import { Plus as FiPlus, Trash2 as FiTrash2, Edit2 as FiEdit2, Phone as FiPhone, Mail as FiMail, MapPin as FiMapPin, Star as FiStar, User as FiUser } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
+import { Modal, ModalBody, ModalContent, ModalFooter } from '@/components/ui/animated-modal';
 
 export default function Suppliers() {
     const [suppliers, setSuppliers] = useState([]);
@@ -99,10 +100,10 @@ export default function Suppliers() {
                 ))}
             </div>
 
-            {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <h2>{editingId ? 'Edit Supplier' : 'Add Supplier'}</h2>
+            <Modal open={isModalOpen} setOpen={setIsModalOpen}>
+                <ModalBody>
+                    <ModalContent>
+                        <h2 className="text-xl font-bold mb-4 text-white">{editingId ? 'Edit Supplier' : 'Add Supplier'}</h2>
                         <form onSubmit={handleSubmit}>
                             <div className="form-group">
                                 <label>Company Name</label>
@@ -132,18 +133,18 @@ export default function Suppliers() {
                                     {materials.map(m => <option key={m._id} value={m._id}>{m.name}</option>)}
                                 </select>
                             </div>
-                            <div className="form-group">
+                            <div className="form-group mb-0">
                                 <label>Rating (1-5)</label>
                                 <input type="number" min="1" max="5" value={formData.rating} onChange={e => setFormData({ ...formData, rating: e.target.value })} />
                             </div>
-                            <div className="form-actions">
+                            <ModalFooter className="gap-2 mt-6 bg-transparent border-t border-neutral-200 dark:border-white/10">
                                 <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>Cancel</Button>
                                 <Button type="submit">Save</Button>
-                            </div>
+                            </ModalFooter>
                         </form>
-                    </div>
-                </div>
-            )}
+                    </ModalContent>
+                </ModalBody>
+            </Modal>
         </div>
     );
 }

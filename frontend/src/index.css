@@ -160,6 +160,12 @@
     --sidebar-ring: oklch(0.708 0 0);
 }
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Inter', -apple-system, sans-serif;
     background: var(--bg-primary);
@@ -667,6 +673,7 @@ body {
 .form-group select,
 .form-group textarea {
     width: 100%;
+    box-sizing: border-box;
     padding: 10px 14px;
     background: var(--bg-input);
     border: 1px solid var(--border);

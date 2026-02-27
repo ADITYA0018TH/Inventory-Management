@@ -4,6 +4,7 @@ import { Plus as FiPlus, Check as FiCheck, X as FiX, Printer as FiPrinter, Downl
 import toast from 'react-hot-toast';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Modal, ModalBody, ModalContent, ModalFooter } from '@/components/ui/animated-modal';
 
 export default function Batches() {
     const [batches, setBatches] = useState([]);
@@ -136,23 +137,30 @@ export default function Batches() {
             </div>
 
             {/* QR Code Modal */}
-            {selectedBatch && (
-                <div className="modal-overlay" onClick={() => setSelectedBatch(null)}>
-                    <div className="modal" onClick={e => e.stopPropagation()}>
-                        <h3>QR Code — {selectedBatch.batchId}</h3>
-                        <div className="qr-container">
-                            <img src={selectedBatch.qrCodeData} alt="QR Code" className="qr-image" />
-                        </div>
-                        <div className="qr-details">
-                            <p><strong>Product:</strong> {selectedBatch.productId?.name}</p>
-                            <p><strong>Quantity:</strong> {selectedBatch.quantityProduced}</p>
-                            <p><strong>Mfg:</strong> {new Date(selectedBatch.mfgDate).toLocaleDateString()}</p>
-                            <p><strong>Exp:</strong> {new Date(selectedBatch.expDate).toLocaleDateString()}</p>
-                        </div>
-                        <button className="btn btn-ghost btn-full" onClick={() => setSelectedBatch(null)}>Close</button>
-                    </div>
-                </div>
-            )}
+            {/* QR Code Modal */}
+            <Modal open={!!selectedBatch} setOpen={(open) => !open && setSelectedBatch(null)}>
+                <ModalBody>
+                    <ModalContent className="items-center text-center max-w-[400px]">
+                        {selectedBatch && (
+                            <>
+                                <h3 className="text-xl font-bold mb-4 text-white">QR Code — {selectedBatch.batchId}</h3>
+                                <div className="qr-container mx-auto mb-6 bg-white p-4 rounded-xl inline-block shadow-lg">
+                                    <img src={selectedBatch.qrCodeData} alt="QR Code" className="w-48 h-48 max-w-none" />
+                                </div>
+                                <div className="qr-details text-sm text-left grid grid-cols-2 gap-4 w-full mb-6 bg-neutral-900 border border-neutral-800 p-4 rounded-lg">
+                                    <p><span className="text-neutral-400 block mb-1">Product</span><span className="text-white font-medium">{selectedBatch.productId?.name}</span></p>
+                                    <p><span className="text-neutral-400 block mb-1">Quantity</span><span className="text-white font-medium">{selectedBatch.quantityProduced?.toLocaleString()}</span></p>
+                                    <p><span className="text-neutral-400 block mb-1">Mfg Date</span><span className="text-white font-medium">{new Date(selectedBatch.mfgDate).toLocaleDateString()}</span></p>
+                                    <p><span className="text-neutral-400 block mb-1">Exp Date</span><span className="text-white font-medium">{new Date(selectedBatch.expDate).toLocaleDateString()}</span></p>
+                                </div>
+                                <ModalFooter className="bg-transparent flex justify-center w-full mt-2">
+                                    <button className="btn btn-ghost w-full" onClick={() => setSelectedBatch(null)}>Close</button>
+                                </ModalFooter>
+                            </>
+                        )}
+                    </ModalContent>
+                </ModalBody>
+            </Modal>
         </div>
     );
 }

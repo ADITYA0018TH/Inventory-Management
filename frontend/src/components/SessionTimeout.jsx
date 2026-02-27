@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { Modal, ModalBody, ModalContent, ModalFooter } from '@/components/ui/animated-modal';
 
 const TIMEOUT_MS = 30 * 60 * 1000;     // 30 minutes
 const WARNING_MS = 25 * 60 * 1000;     // 25 minutes — show warning
@@ -35,18 +36,20 @@ export default function SessionTimeout() {
         };
     }, []);
 
-    if (!showWarning) return null;
-
     return (
-        <div className="modal-overlay">
-            <div className="modal session-modal">
-                <div className="session-warning-icon">⏰</div>
-                <h3>Session Expiring Soon</h3>
-                <p>You've been inactive for a while. Your session will expire in 5 minutes.</p>
-                <button className="btn btn-primary btn-full" onClick={resetTimers}>
-                    I'm Still Here
-                </button>
-            </div>
-        </div>
+        <Modal open={showWarning} setOpen={setShowWarning}>
+            <ModalBody>
+                <ModalContent className="items-center text-center max-w-[400px]">
+                    <div className="session-warning-icon text-5xl mb-4 text-amber-500">⏰</div>
+                    <h3 className="text-xl font-bold mb-2 text-white">Session Expiring Soon</h3>
+                    <p className="text-neutral-400 mb-6">You've been inactive for a while. Your session will expire in 5 minutes.</p>
+                    <ModalFooter className="p-0 bg-transparent flex justify-center w-full">
+                        <button className="btn btn-primary btn-full w-full" onClick={resetTimers}>
+                            I'm Still Here
+                        </button>
+                    </ModalFooter>
+                </ModalContent>
+            </ModalBody>
+        </Modal>
     );
 }

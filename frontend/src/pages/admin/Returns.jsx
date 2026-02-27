@@ -3,6 +3,7 @@ import API from '../../api';
 import { Check as FiCheck, X as FiX, AlertTriangle as FiAlertTriangle, Search as FiSearch } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Modal, ModalBody, ModalContent, ModalFooter } from '@/components/ui/animated-modal';
 
 export default function Returns() {
     const [returns, setReturns] = useState([]);
@@ -97,10 +98,10 @@ export default function Returns() {
                 </table>
             </div>
 
-            {isRecallModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <h2>Initiate Batch Recall</h2>
+            <Modal open={isRecallModalOpen} setOpen={setIsRecallModalOpen}>
+                <ModalBody>
+                    <ModalContent className="max-w-[500px]">
+                        <h2 className="text-xl font-bold mb-4 text-white">Initiate Batch Recall</h2>
                         <form onSubmit={handleRecallSubmit}>
                             <div className="form-group">
                                 <label>Batch ID</label>
@@ -123,14 +124,14 @@ export default function Returns() {
                                 <label>Reason for Recall</label>
                                 <textarea value={recallData.reason} onChange={e => setRecallData({ ...recallData, reason: e.target.value })} required />
                             </div>
-                            <div className="form-actions">
+                            <ModalFooter className="gap-2 mt-4 bg-transparent border-t border-white/10">
                                 <button type="button" className="btn btn-secondary" onClick={() => setIsRecallModalOpen(false)}>Cancel</button>
                                 <button type="submit" className="btn btn-danger">Initiate Recall</button>
-                            </div>
+                            </ModalFooter>
                         </form>
-                    </div>
-                </div>
-            )}
+                    </ModalContent>
+                </ModalBody>
+            </Modal>
         </div>
     );
 }

@@ -3,6 +3,7 @@ import API from '../../api';
 import { Truck as FiTruck, MapPin as FiMapPin, CheckCircle as FiCheckCircle, Clock as FiClock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Modal, ModalBody, ModalContent, ModalFooter } from '@/components/ui/animated-modal';
 
 export default function ShipmentTracking() {
     const [orders, setOrders] = useState([]);
@@ -86,10 +87,10 @@ export default function ShipmentTracking() {
                 ))}
             </div>
 
-            {modalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <h2>Update Tracking — {selectedOrder?.invoiceNumber}</h2>
+            <Modal open={modalOpen} setOpen={setModalOpen}>
+                <ModalBody>
+                    <ModalContent className="max-w-[400px]">
+                        <h2 className="text-xl font-bold mb-4 text-white">Update Tracking — {selectedOrder?.invoiceNumber}</h2>
                         <form onSubmit={handleUpdate}>
                             <div className="form-group">
                                 <label>Current Status</label>
@@ -113,14 +114,14 @@ export default function ShipmentTracking() {
                                 <label>Note</label>
                                 <textarea value={updateData.note} onChange={e => setUpdateData({ ...updateData, note: e.target.value })} />
                             </div>
-                            <div className="form-actions">
+                            <ModalFooter className="gap-2 mt-4 bg-transparent border-t border-white/10">
                                 <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>Cancel</button>
                                 <button type="submit" className="btn btn-primary">Update</button>
-                            </div>
+                            </ModalFooter>
                         </form>
-                    </div>
-                </div>
-            )}
+                    </ModalContent>
+                </ModalBody>
+            </Modal>
         </div>
     );
 }

@@ -3,6 +3,7 @@ import API from '../../api';
 import { Check as FiCheck, Truck as FiTruck, X as FiX, Box as FiBox, FileText as FiFileText, Download as FiDownload } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Modal, ModalBody, ModalContent, ModalFooter } from '@/components/ui/animated-modal';
 
 export default function AdminOrders() {
     const [orders, setOrders] = useState([]);
@@ -133,10 +134,10 @@ export default function AdminOrders() {
                 ))}
             </div>
 
-            {isAssignModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <h2>Assign Batch</h2>
+            <Modal open={isAssignModalOpen} setOpen={setIsAssignModalOpen}>
+                <ModalBody>
+                    <ModalContent className="max-w-[400px]">
+                        <h2 className="text-xl font-bold mb-4 text-white">Assign Batch</h2>
                         <Select value={selectedBatchId} onValueChange={setSelectedBatchId}>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select Batch..." />
@@ -147,13 +148,13 @@ export default function AdminOrders() {
                                 ))}
                             </SelectContent>
                         </Select>
-                        <div className="form-actions">
+                        <ModalFooter className="gap-2 mt-4 bg-transparent border-t border-white/10">
                             <button className="btn btn-secondary" onClick={() => setIsAssignModalOpen(false)}>Cancel</button>
                             <button className="btn btn-primary" onClick={handleAssignBatch}>Assign</button>
-                        </div>
-                    </div>
-                </div>
-            )}
+                        </ModalFooter>
+                    </ModalContent>
+                </ModalBody>
+            </Modal>
 
             {isInvoiceOpen && invoiceData && (
                 <div className="modal-overlay" onClick={() => setIsInvoiceOpen(false)}>
