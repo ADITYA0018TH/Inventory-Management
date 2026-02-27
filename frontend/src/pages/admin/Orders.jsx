@@ -71,6 +71,11 @@ export default function AdminOrders() {
         window.print();
     };
 
+    const downloadPDF = (orderId) => {
+        const token = localStorage.getItem('token');
+        window.open(`http://localhost:5001/api/invoice/${orderId}/pdf?token=${token}`, '_blank');
+    };
+
     const exportCSV = () => {
         window.open('http://localhost:5001/api/export/orders', '_blank');
     };
@@ -112,6 +117,7 @@ export default function AdminOrders() {
                         </div>
                         <div className="card-footer">
                             <button className="btn-icon" onClick={() => viewInvoice(o)} title="View Invoice"><FiFileText /></button>
+                            <button className="btn-icon" onClick={() => downloadPDF(o._id)} title="Download PDF"><FiDownload /></button>
                             {o.status === 'Pending' && (
                                 <>
                                     <button className="btn-icon success" onClick={() => updateStatus(o._id, 'Approved')}><FiCheck /></button>

@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FiHome, FiPackage, FiLayers, FiShoppingCart, FiBox, FiLogOut, FiUser, FiSearch, FiUsers, FiFileText, FiSettings, FiTruck, FiAlertTriangle, FiMessageSquare, FiClock } from 'react-icons/fi';
+import { FiHome, FiPackage, FiLayers, FiShoppingCart, FiBox, FiLogOut, FiUser, FiSearch, FiUsers, FiFileText, FiSettings, FiTruck, FiAlertTriangle, FiMessageSquare, FiClock, FiShield, FiThermometer, FiTrendingUp, FiClipboard, FiMapPin, FiCamera, FiAlertCircle } from 'react-icons/fi';
 import ThemeToggle from './ThemeToggle';
 
 export default function Sidebar({ isOpen, onClose }) {
@@ -18,6 +18,8 @@ export default function Sidebar({ isOpen, onClose }) {
             group: 'Overview', items: [
                 { to: '/admin/dashboard', label: 'Dashboard', icon: <FiHome /> },
                 { to: '/admin/reports', label: 'Reports', icon: <FiFileText /> },
+                { to: '/admin/compliance', label: 'Compliance', icon: <FiShield /> },
+                { to: '/admin/forecasting', label: 'Forecasting', icon: <FiTrendingUp /> },
             ]
         },
         {
@@ -26,6 +28,8 @@ export default function Sidebar({ isOpen, onClose }) {
                 { to: '/admin/products', label: 'Products', icon: <FiPackage /> },
                 { to: '/admin/batches', label: 'Batches', icon: <FiLayers /> },
                 { to: '/admin/suppliers', label: 'Suppliers', icon: <FiUsers /> },
+                { to: '/admin/warehouses', label: 'Warehouses', icon: <FiMapPin /> },
+                { to: '/admin/purchase-orders', label: 'Purchase Orders', icon: <FiClipboard /> },
             ]
         },
         {
@@ -34,6 +38,9 @@ export default function Sidebar({ isOpen, onClose }) {
                 { to: '/admin/quality', label: 'Quality Control', icon: <FiSearch /> },
                 { to: '/admin/shipping', label: 'Shipment Tracking', icon: <FiTruck /> },
                 { to: '/admin/returns', label: 'Returns', icon: <FiAlertTriangle /> },
+                { to: '/admin/expiry', label: 'Expiry Intelligence', icon: <FiAlertCircle /> },
+                { to: '/admin/recalls', label: 'Drug Recalls', icon: <FiAlertTriangle /> },
+                { to: '/admin/storage', label: 'Storage Compliance', icon: <FiThermometer /> },
             ]
         },
         {
@@ -52,6 +59,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 { to: '/distributor/orders', label: 'My Orders', icon: <FiShoppingCart /> },
                 { to: '/distributor/returns', label: 'My Returns', icon: <FiAlertTriangle /> },
                 { to: '/distributor/verify', label: 'Verify Batch', icon: <FiSearch /> },
+                { to: '/distributor/scanner', label: 'QR Scanner', icon: <FiCamera /> },
                 { to: '/messages', label: 'Messages', icon: <FiMessageSquare /> },
             ]
         }

@@ -10,7 +10,13 @@ const ProductSchema = new mongoose.Schema({
     formula: [{
         materialId: { type: mongoose.Schema.Types.ObjectId, ref: 'RawMaterial' },
         quantityRequired: { type: Number } // e.g., 0.5 (kg)
-    }]
+    }],
+    storageConditions: {
+        minTemp: { type: Number, default: 15 },  // °C
+        maxTemp: { type: Number, default: 25 },   // °C
+        minHumidity: { type: Number, default: 30 }, // %
+        maxHumidity: { type: Number, default: 60 }  // %
+    }
 });
 
 module.exports = mongoose.model('Product', ProductSchema);

@@ -17,10 +17,21 @@ import Suppliers from './pages/admin/Suppliers';
 import AdminReturns from './pages/admin/Returns';
 import QualityControl from './pages/admin/QualityControl';
 import ShipmentTracking from './pages/admin/ShipmentTracking';
+// New Feature Pages
+import ExpiryIntelligence from './pages/admin/ExpiryIntelligence';
+import Recalls from './pages/admin/Recalls';
+import StorageCompliance from './pages/admin/StorageCompliance';
+import Compliance from './pages/admin/Compliance';
+import Forecasting from './pages/admin/Forecasting';
+import PurchaseOrders from './pages/admin/PurchaseOrders';
+import Warehouses from './pages/admin/Warehouses';
+
 import Catalog from './pages/distributor/Catalog';
 import DistributorOrders from './pages/distributor/Orders';
 import VerifyBatch from './pages/distributor/VerifyBatch';
 import DistributorReturns from './pages/distributor/Returns';
+import Scanner from './pages/distributor/Scanner';
+
 import Messages from './pages/Messages';
 import Profile from './pages/Profile';
 import './index.css';
@@ -49,6 +60,14 @@ function AppRoutes() {
         <Route path="returns" element={<AdminReturns />} />
         <Route path="users" element={<UserManagement />} />
         <Route path="audit-log" element={<AuditLog />} />
+        {/* New Feature Routes */}
+        <Route path="expiry" element={<ExpiryIntelligence />} />
+        <Route path="recalls" element={<Recalls />} />
+        <Route path="storage" element={<StorageCompliance />} />
+        <Route path="compliance" element={<Compliance />} />
+        <Route path="forecasting" element={<Forecasting />} />
+        <Route path="purchase-orders" element={<PurchaseOrders />} />
+        <Route path="warehouses" element={<Warehouses />} />
       </Route>
 
       {/* Distributor Routes */}
@@ -57,6 +76,7 @@ function AppRoutes() {
         <Route path="orders" element={<DistributorOrders />} />
         <Route path="returns" element={<DistributorReturns />} />
         <Route path="verify" element={<VerifyBatch />} />
+        <Route path="scanner" element={<Scanner />} />
       </Route>
 
       {/* Shared Routes */}

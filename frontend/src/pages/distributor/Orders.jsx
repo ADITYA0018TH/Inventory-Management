@@ -26,6 +26,11 @@ export default function DistributorOrders() {
         window.print();
     };
 
+    const downloadPDF = (orderId) => {
+        const token = localStorage.getItem('token');
+        window.open(`http://localhost:5001/api/invoice/${orderId}/pdf?token=${token}`, '_blank');
+    };
+
     return (
         <div className="page">
             <div className="page-header">
@@ -68,6 +73,7 @@ export default function DistributorOrders() {
                             </div>
                             <div className="card-footer">
                                 <button className="btn-icon" onClick={() => viewInvoice(o)} title="View Invoice"><FiFileText /></button>
+                                <button className="btn-icon" onClick={() => downloadPDF(o._id)} title="Download PDF"><FiDownload /></button>
                                 {o.status === 'Shipped' && (
                                     <button className="btn btn-sm btn-outline">Track Shipment</button>
                                 )}

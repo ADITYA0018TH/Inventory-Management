@@ -3,7 +3,7 @@ const router = express.Router();
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const { auth, adminOnly } = require('../middleware/auth');
-const { sendEmail } = require('../utils/email');
+const { sendEmail, sendOrderConfirmation } = require('../utils/email');
 
 // GET all orders (admin sees all, distributor sees own)
 router.get('/', auth, async (req, res) => {

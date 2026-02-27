@@ -12,6 +12,8 @@ const UserSchema = new mongoose.Schema({
     companyName: { type: String }, // For distributors
     gstNumber: { type: String },   // Optional
     isActive: { type: Boolean, default: true },
+    twoFactorSecret: { type: String },
+    twoFactorEnabled: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now }
 });
 
