@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 export default function Register() {
     const [form, setForm] = useState({ name: '', email: '', password: '', role: 'distributor', companyName: '', gstNumber: '' });
@@ -47,10 +48,15 @@ export default function Register() {
                             </div>
                             <div className="form-group">
                                 <label>Role</label>
-                                <select name="role" value={form.role} onChange={handleChange}>
-                                    <option value="distributor">Distributor</option>
-                                    <option value="admin">Admin / Manufacturer</option>
-                                </select>
+                                <Select value={form.role} onValueChange={(val) => setForm({ ...form, role: val })}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select role" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="distributor">Distributor</SelectItem>
+                                        <SelectItem value="admin">Admin / Manufacturer</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
                         <div className="form-group">

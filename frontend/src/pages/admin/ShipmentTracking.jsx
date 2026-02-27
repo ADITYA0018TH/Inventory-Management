@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
-import { FiTruck, FiMapPin, FiCheckCircle, FiClock } from 'react-icons/fi';
+import { Truck as FiTruck, MapPin as FiMapPin, CheckCircle as FiCheckCircle, Clock as FiClock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 export default function ShipmentTracking() {
     const [orders, setOrders] = useState([]);
@@ -92,12 +93,17 @@ export default function ShipmentTracking() {
                         <form onSubmit={handleUpdate}>
                             <div className="form-group">
                                 <label>Current Status</label>
-                                <select value={updateData.status} onChange={e => setUpdateData({ ...updateData, status: e.target.value })}>
-                                    <option value="In Transit">In Transit</option>
-                                    <option value="Out for Delivery">Out for Delivery</option>
-                                    <option value="Delivered">Delivered</option>
-                                    <option value="Delayed">Delayed</option>
-                                </select>
+                                <Select value={updateData.status} onValueChange={(val) => setUpdateData({ ...updateData, status: val })}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="In Transit">In Transit</SelectItem>
+                                        <SelectItem value="Out for Delivery">Out for Delivery</SelectItem>
+                                        <SelectItem value="Delivered">Delivered</SelectItem>
+                                        <SelectItem value="Delayed">Delayed</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
                             <div className="form-group">
                                 <label>Location</label>

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
-import { FiPlus, FiEdit2, FiTrash2, FiArrowUp, FiDownload } from 'react-icons/fi';
+import { Plus as FiPlus, Edit2 as FiEdit2, Trash2 as FiTrash2, ArrowUp as FiArrowUp, Download as FiDownload } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 export default function Inventory() {
     const [materials, setMaterials] = useState([]);
@@ -80,9 +81,18 @@ export default function Inventory() {
                         <div className="form-row">
                             <div className="form-group"><label>Name</label><input type="text" name="name" value={form.name} onChange={handleChange} placeholder="e.g. Paracetamol Powder" required /></div>
                             <div className="form-group"><label>Unit</label>
-                                <select name="unit" value={form.unit} onChange={handleChange}>
-                                    <option value="kg">kg</option><option value="liters">liters</option><option value="units">units</option><option value="grams">grams</option><option value="ml">ml</option>
-                                </select>
+                                <Select value={form.unit} onValueChange={(val) => setForm({ ...form, unit: val })}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select unit" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="kg">kg</SelectItem>
+                                        <SelectItem value="liters">liters</SelectItem>
+                                        <SelectItem value="units">units</SelectItem>
+                                        <SelectItem value="grams">grams</SelectItem>
+                                        <SelectItem value="ml">ml</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
                         <div className="form-row">

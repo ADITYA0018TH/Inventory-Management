@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
-import { FiAlertTriangle, FiClock, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
+import { AlertTriangle as FiAlertTriangle, Clock as FiClock, AlertCircle as FiAlertCircle, CheckCircle as FiCheckCircle } from 'lucide-react';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 export default function ExpiryIntelligence() {
     const [heatmap, setHeatmap] = useState({ expired: [], critical: [], warning: [], caution: [] });
@@ -89,10 +90,16 @@ export default function ExpiryIntelligence() {
             <div className="card" style={{ marginTop: 24 }}>
                 <h3>📦 FEFO Shipping Recommendations</h3>
                 <p style={{ color: 'var(--text-secondary)' }}>Select a product to see which batches should be shipped first</p>
-                <select className="form-input" value={fefoProduct} onChange={e => loadFEFO(e.target.value)}>
-                    <option value="">Select Product...</option>
-                    {products.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
-                </select>
+                <Select value={fefoProduct} onValueChange={loadFEFO}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select Product..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {products.map(p => (
+                            <SelectItem key={p._id} value={p._id}>{p.name}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
 
                 {fefoList.length > 0 && (
                     <div className="table-container" style={{ marginTop: 16 }}>

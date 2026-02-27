@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
 import toast from 'react-hot-toast';
-import { FiFileText, FiDownload } from 'react-icons/fi';
+import { FileText, Download } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function DistributorOrders() {
     const [orders, setOrders] = useState([]);
@@ -71,11 +72,11 @@ export default function DistributorOrders() {
                                     )}
                                 </div>
                             </div>
-                            <div className="card-footer">
-                                <button className="btn-icon" onClick={() => viewInvoice(o)} title="View Invoice"><FiFileText /></button>
-                                <button className="btn-icon" onClick={() => downloadPDF(o._id)} title="Download PDF"><FiDownload /></button>
+                            <div className="card-footer flex justify-end gap-2 mt-0">
+                                <Button variant="ghost" size="icon" onClick={() => viewInvoice(o)} title="View Invoice"><FileText className="h-4 w-4" /></Button>
+                                <Button variant="ghost" size="icon" onClick={() => downloadPDF(o._id)} title="Download PDF"><Download className="h-4 w-4" /></Button>
                                 {o.status === 'Shipped' && (
-                                    <button className="btn btn-sm btn-outline">Track Shipment</button>
+                                    <Button variant="outline" size="sm">Track Shipment</Button>
                                 )}
                             </div>
                         </div>
@@ -139,9 +140,9 @@ export default function DistributorOrders() {
                                 </tr>
                             </tfoot>
                         </table>
-                        <div className="invoice-footer mt-8 text-center no-print">
-                            <button className="btn btn-primary" onClick={printInvoice}>Print Invoice</button>
-                            <button className="btn btn-secondary ml-2" onClick={() => setIsInvoiceOpen(false)}>Close</button>
+                        <div className="invoice-footer mt-8 text-center no-print flex justify-center gap-2">
+                            <Button onClick={printInvoice}>Print Invoice</Button>
+                            <Button variant="secondary" onClick={() => setIsInvoiceOpen(false)}>Close</Button>
                         </div>
                     </div>
                 </div>

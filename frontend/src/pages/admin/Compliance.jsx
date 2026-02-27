@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
-import { FiShield, FiCheckCircle, FiAlertTriangle, FiAlertCircle } from 'react-icons/fi';
+import { Shield as FiShield, CheckCircle as FiCheckCircle, AlertTriangle as FiAlertTriangle, AlertCircle as FiAlertCircle } from 'lucide-react';
 
 export default function Compliance() {
     const [score, setScore] = useState(null);

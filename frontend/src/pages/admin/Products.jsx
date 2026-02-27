@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
-import { FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
+import { Plus as FiPlus, Edit2 as FiEdit2, Trash2 as FiTrash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 export default function Products() {
     const [products, setProducts] = useState([]);
@@ -72,9 +73,16 @@ export default function Products() {
                         <div className="form-row">
                             <div className="form-group"><label>Product Name</label><input type="text" name="name" value={form.name} onChange={handleChange} placeholder="Aster Cold Relief" required /></div>
                             <div className="form-group"><label>Type</label>
-                                <select name="type" value={form.type} onChange={handleChange}>
-                                    <option value="Tablet">Tablet</option><option value="Syrup">Syrup</option><option value="Injection">Injection</option>
-                                </select>
+                                <Select value={form.type} onValueChange={(val) => setForm({ ...form, type: val })}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select Type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Tablet">Tablet</SelectItem>
+                                        <SelectItem value="Syrup">Syrup</SelectItem>
+                                        <SelectItem value="Injection">Injection</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
                         <div className="form-row">
@@ -90,10 +98,16 @@ export default function Products() {
                             </div>
                             {form.formula.map((f, i) => (
                                 <div key={i} className="formula-row">
-                                    <select value={f.materialId} onChange={e => updateFormulaItem(i, 'materialId', e.target.value)} required>
-                                        <option value="">Select Material</option>
-                                        {materials.map(m => <option key={m._id} value={m._id}>{m.name} ({m.currentStock} {m.unit})</option>)}
-                                    </select>
+                                    <Select value={f.materialId} onValueChange={(val) => updateFormulaItem(i, 'materialId', val)}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Material" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {materials.map(m => (
+                                                <SelectItem key={m._id} value={m._id}>{m.name} ({m.currentStock} {m.unit})</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                     <input type="number" step="0.001" value={f.quantityRequired} onChange={e => updateFormulaItem(i, 'quantityRequired', e.target.value)} placeholder="Qty required" required />
                                     <button type="button" className="btn btn-sm btn-danger" onClick={() => removeFormulaItem(i)}><FiTrash2 /></button>
                                 </div>

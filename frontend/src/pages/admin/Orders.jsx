@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
-import { FiCheck, FiTruck, FiX, FiBox, FiFileText, FiDownload } from 'react-icons/fi';
+import { Check as FiCheck, Truck as FiTruck, X as FiX, Box as FiBox, FileText as FiFileText, Download as FiDownload } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 export default function AdminOrders() {
     const [orders, setOrders] = useState([]);
@@ -136,12 +137,16 @@ export default function AdminOrders() {
                 <div className="modal-overlay">
                     <div className="modal-content">
                         <h2>Assign Batch</h2>
-                        <select onChange={e => setSelectedBatchId(e.target.value)} className="input-full mb-4">
-                            <option value="">Select Batch...</option>
-                            {batches.filter(b => b.status === 'Released').map(b => (
-                                <option key={b._id} value={b.batchId}>{b.batchId} ({b.quantityProduced} units)</option>
-                            ))}
-                        </select>
+                        <Select value={selectedBatchId} onValueChange={setSelectedBatchId}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select Batch..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {batches.filter(b => b.status === 'Released').map(b => (
+                                    <SelectItem key={b.batchId} value={b.batchId}>{b.batchId} ({b.quantityProduced} units)</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                         <div className="form-actions">
                             <button className="btn btn-secondary" onClick={() => setIsAssignModalOpen(false)}>Cancel</button>
                             <button className="btn btn-primary" onClick={handleAssignBatch}>Assign</button>

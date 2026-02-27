@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
-import { FiPlus, FiCheck, FiX, FiPrinter, FiDownload } from 'react-icons/fi';
+import { Plus as FiPlus, Check as FiCheck, X as FiX, Printer as FiPrinter, Download as FiDownload } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { DatePicker } from '@/components/ui/date-picker';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 export default function Batches() {
     const [batches, setBatches] = useState([]);
@@ -69,16 +71,22 @@ export default function Batches() {
                         <div className="form-row">
                             <div className="form-group"><label>Batch ID</label><input type="text" name="batchId" value={form.batchId} onChange={handleChange} placeholder="AST-2026-001" required /></div>
                             <div className="form-group"><label>Product</label>
-                                <select name="productId" value={form.productId} onChange={handleChange} required>
-                                    <option value="">Select Product</option>
-                                    {products.map(p => <option key={p._id} value={p._id}>{p.name} ({p.type})</option>)}
-                                </select>
+                                <Select value={form.productId} onValueChange={(val) => setForm(prev => ({ ...prev, productId: val }))}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select Product" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {products.map(p => (
+                                            <SelectItem key={p._id} value={p._id}>{p.name} ({p.type})</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
                         <div className="form-row">
                             <div className="form-group"><label>Quantity to Produce</label><input type="number" name="quantityProduced" value={form.quantityProduced} onChange={handleChange} placeholder="1000" required /></div>
-                            <div className="form-group"><label>Mfg Date</label><input type="date" name="mfgDate" value={form.mfgDate} onChange={handleChange} required /></div>
-                            <div className="form-group"><label>Expiry Date</label><input type="date" name="expDate" value={form.expDate} onChange={handleChange} required /></div>
+                            <div className="form-group"><label>Mfg Date</label><DatePicker value={form.mfgDate} onChange={(date) => setForm({ ...form, mfgDate: date })} /></div>
+                            <div className="form-group"><label>Expiry Date</label><DatePicker value={form.expDate} onChange={(date) => setForm({ ...form, expDate: date })} /></div>
                         </div>
                         <div className="form-actions">
                             <button type="submit" className="btn btn-primary">Create Batch</button>
@@ -108,12 +116,17 @@ export default function Batches() {
                                     )}
                                 </td>
                                 <td>
-                                    <select className="status-select" value={b.status} onChange={e => updateStatus(b._id, e.target.value)}>
-                                        <option value="In Production">In Production</option>
-                                        <option value="Quality Check">Quality Check</option>
-                                        <option value="Released">Released</option>
-                                        <option value="Shipped">Shipped</option>
-                                    </select>
+                                    <Select value={b.status} onValueChange={(val) => updateStatus(b._id, val)}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Status" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="In Production">In Production</SelectItem>
+                                            <SelectItem value="Quality Check">Quality Check</SelectItem>
+                                            <SelectItem value="Released">Released</SelectItem>
+                                            <SelectItem value="Shipped">Shipped</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 </td>
                             </tr>
                         ))}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FiFileText } from 'react-icons/fi';
+import { FileText as FiFileText } from 'lucide-react';
 import API from '../../api';
 import toast from 'react-hot-toast';
 import Pagination from '../../components/Pagination';

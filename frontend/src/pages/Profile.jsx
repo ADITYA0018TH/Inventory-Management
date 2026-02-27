@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { FiUser, FiLock, FiSave, FiShield } from 'react-icons/fi';
+import { User as FiUser, Lock as FiLock, Save as FiSave, Shield as FiShield } from 'lucide-react';
 import API from '../api';
 import toast from 'react-hot-toast';
 

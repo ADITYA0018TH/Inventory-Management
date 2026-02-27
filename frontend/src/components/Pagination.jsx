@@ -1,4 +1,4 @@
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { ChevronLeft as FiChevronLeft, ChevronRight as FiChevronRight } from 'lucide-react';
 
 export default function Pagination({ page, totalPages, onPageChange }) {
     if (totalPages <= 1) return null;

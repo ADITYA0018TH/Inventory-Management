@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
-import { FiPlus, FiAlertCircle } from 'react-icons/fi';
+import { Plus as FiPlus, AlertCircle as FiAlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 export default function DistributorReturns() {
     const [returns, setReturns] = useState([]);
@@ -78,10 +79,16 @@ export default function DistributorReturns() {
                         <form onSubmit={handleSubmit}>
                             <div className="form-group">
                                 <label>Product</label>
-                                <select value={formData.productId} onChange={e => setFormData({ ...formData, productId: e.target.value })} required>
-                                    <option value="">Select Product...</option>
-                                    {products.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
-                                </select>
+                                <Select value={formData.productId} onValueChange={(val) => setFormData({ ...formData, productId: val })}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select Product..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {products.map(p => (
+                                            <SelectItem key={p._id} value={p._id}>{p.name}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
                             <div className="form-group">
                                 <label>Batch ID (Optional)</label>

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import API from '../api';
 import { useAuth } from '../context/AuthContext';
-import { FiSend, FiUser, FiSearch } from 'react-icons/fi';
+import { Send as FiSend, User as FiUser, Search as FiSearch } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function Messages() {

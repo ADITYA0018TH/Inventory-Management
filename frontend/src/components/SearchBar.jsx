@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiSearch, FiPackage, FiBox, FiLayers, FiShoppingCart } from 'react-icons/fi';
+import { Search as FiSearch, Package as FiPackage, Box as FiBox, Layers as FiLayers, ShoppingCart as FiShoppingCart } from 'lucide-react';
 import API from '../api';
 
 export default function SearchBar() {

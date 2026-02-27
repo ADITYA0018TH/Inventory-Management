@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
 import toast from 'react-hot-toast';
-import { FiMapPin, FiBox, FiArrowRight } from 'react-icons/fi';
+import { MapPin as FiMapPin, Box as FiBox, ArrowRight as FiArrowRight } from 'lucide-react';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 export default function Warehouses() {
     const [warehouses, setWarehouses] = useState([]);
@@ -107,26 +108,44 @@ export default function Warehouses() {
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                             <div>
                                 <label className="form-label">From Warehouse</label>
-                                <select className="form-input" value={transferForm.fromWarehouseId} onChange={e => setTransferForm({ ...transferForm, fromWarehouseId: e.target.value })} required>
-                                    <option value="">Select source...</option>
-                                    {warehouses.map(w => <option key={w._id} value={w._id}>{w.name}</option>)}
-                                </select>
+                                <Select value={transferForm.fromWarehouseId} onValueChange={(val) => setTransferForm({ ...transferForm, fromWarehouseId: val })}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select source..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {warehouses.map(w => (
+                                            <SelectItem key={w._id} value={w._id}>{w.name}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
                             <div>
                                 <label className="form-label">To Warehouse</label>
-                                <select className="form-input" value={transferForm.toWarehouseId} onChange={e => setTransferForm({ ...transferForm, toWarehouseId: e.target.value })} required>
-                                    <option value="">Select destination...</option>
-                                    {warehouses.filter(w => w._id !== transferForm.fromWarehouseId).map(w => <option key={w._id} value={w._id}>{w.name}</option>)}
-                                </select>
+                                <Select value={transferForm.toWarehouseId} onValueChange={(val) => setTransferForm({ ...transferForm, toWarehouseId: val })}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select destination..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {warehouses.filter(w => w._id !== transferForm.fromWarehouseId).map(w => (
+                                            <SelectItem key={w._id} value={w._id}>{w.name}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                             <div>
                                 <label className="form-label">Material</label>
-                                <select className="form-input" value={transferForm.materialId} onChange={e => setTransferForm({ ...transferForm, materialId: e.target.value })} required>
-                                    <option value="">Select material...</option>
-                                    {materials.map(m => <option key={m._id} value={m._id}>{m.name}</option>)}
-                                </select>
+                                <Select value={transferForm.materialId} onValueChange={(val) => setTransferForm({ ...transferForm, materialId: val })}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select material..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {materials.map(m => (
+                                            <SelectItem key={m._id} value={m._id}>{m.name}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
                             <div>
                                 <label className="form-label">Quantity</label>

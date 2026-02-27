@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { FiTrendingUp } from 'react-icons/fi';
+import { TrendingUp as FiTrendingUp } from 'lucide-react';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 export default function Forecasting() {
     const [products, setProducts] = useState([]);
@@ -61,10 +62,16 @@ export default function Forecasting() {
             {/* Product Selector */}
             <div className="card" style={{ marginBottom: 20 }}>
                 <h3>Detailed Prediction</h3>
-                <select className="form-input" value={selectedProduct} onChange={e => loadPrediction(e.target.value)}>
-                    <option value="">Select a product to view detailed forecast...</option>
-                    {products.map(p => <option key={p._id} value={p._id}>{p.name} ({p.type})</option>)}
-                </select>
+                <Select value={selectedProduct} onValueChange={loadPrediction}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select a product to view detailed forecast..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {products.map(p => (
+                            <SelectItem key={p._id} value={p._id}>{p.name} ({p.type})</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             </div>
 
             {/* Chart */}

@@ -4,7 +4,7 @@ import Sidebar from './Sidebar';
 import SearchBar from './SearchBar';
 import NotificationBell from './NotificationBell';
 import SessionTimeout from './SessionTimeout';
-import { FiMenu } from 'react-icons/fi';
+import { Menu as FiMenu } from 'lucide-react';
 
 export default function Layout() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);

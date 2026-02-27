@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
 import toast from 'react-hot-toast';
-import { FiShoppingBag, FiCheck, FiSend, FiPackage } from 'react-icons/fi';
+import { ShoppingBag as FiShoppingBag, Check as FiCheck, Send as FiSend, Package as FiPackage } from 'lucide-react';
 
 export default function PurchaseOrders() {
     const [pos, setPOs] = useState([]);

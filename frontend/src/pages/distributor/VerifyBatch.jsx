@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import API from '../../api';
 import toast from 'react-hot-toast';
-import { FiSearch, FiCheckCircle, FiXCircle } from 'react-icons/fi';
+import { Search as FiSearch, CheckCircle as FiCheckCircle, XCircle as FiXCircle } from 'lucide-react';
 
 export default function VerifyBatch() {
     const [batchId, setBatchId] = useState('');

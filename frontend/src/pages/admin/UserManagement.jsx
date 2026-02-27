@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FiUsers, FiShield, FiToggleLeft, FiToggleRight } from 'react-icons/fi';
+import { Users as FiUsers, Shield as FiShield, ToggleLeft as FiToggleLeft, ToggleRight as FiToggleRight } from 'lucide-react';
 import API from '../../api';
 import toast from 'react-hot-toast';
 import { SkeletonTable } from '../../components/SkeletonLoader';

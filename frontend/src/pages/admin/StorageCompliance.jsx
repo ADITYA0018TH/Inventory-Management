@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
 import toast from 'react-hot-toast';
-import { FiThermometer, FiDroplet, FiAlertTriangle } from 'react-icons/fi';
+import { Thermometer as FiThermometer, Droplet as FiDroplet, AlertTriangle as FiAlertTriangle } from 'lucide-react';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 export default function StorageCompliance() {
     const [stats, setStats] = useState({ totalLogs: 0, totalViolations: 0, complianceRate: 100, recentViolations: [] });
@@ -83,10 +84,16 @@ export default function StorageCompliance() {
                     <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 12 }}>
                         <div>
                             <label className="form-label">Batch</label>
-                            <select className="form-input" value={form.batchId} onChange={e => setForm({ ...form, batchId: e.target.value })} required>
-                                <option value="">Select batch...</option>
-                                {batches.map(b => <option key={b._id} value={b._id}>{b.batchId} — {b.productId?.name}</option>)}
-                            </select>
+                            <Select value={form.batchId} onValueChange={(val) => setForm({ ...form, batchId: val })}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select batch..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {batches.map(b => (
+                                        <SelectItem key={b._id} value={b._id}>{b.batchId} — {b.productId?.name}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                             <div>

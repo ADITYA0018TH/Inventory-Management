@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
 import toast from 'react-hot-toast';
-import { FiAlertTriangle, FiCheckCircle, FiClock } from 'react-icons/fi';
+import { AlertTriangle as FiAlertTriangle, CheckCircle as FiCheckCircle, Clock as FiClock } from 'lucide-react';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 export default function Recalls() {
     const [recalls, setRecalls] = useState([]);
@@ -64,20 +65,29 @@ export default function Recalls() {
                     <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 12 }}>
                         <div>
                             <label className="form-label">Batch</label>
-                            <select className="form-input" value={form.batchId} onChange={e => setForm({ ...form, batchId: e.target.value })} required>
-                                <option value="">Select batch...</option>
-                                {batches.map(b => (
-                                    <option key={b._id} value={b._id}>{b.batchId} — {b.productId?.name}</option>
-                                ))}
-                            </select>
+                            <Select value={form.batchId} onValueChange={(val) => setForm({ ...form, batchId: val })}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select batch..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {batches.map(b => (
+                                        <SelectItem key={b._id} value={b._id}>{b.batchId} — {b.productId?.name}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
                         <div>
                             <label className="form-label">Severity</label>
-                            <select className="form-input" value={form.severity} onChange={e => setForm({ ...form, severity: e.target.value })}>
-                                <option value="Class I">Class I — Most serious, health risk</option>
-                                <option value="Class II">Class II — May cause temporary health issues</option>
-                                <option value="Class III">Class III — Unlikely to cause health issues</option>
-                            </select>
+                            <Select value={form.severity} onValueChange={(val) => setForm({ ...form, severity: val })}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select Severity" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Class I">Class I — Most serious, health risk</SelectItem>
+                                    <SelectItem value="Class II">Class II — May cause temporary health issues</SelectItem>
+                                    <SelectItem value="Class III">Class III — Unlikely to cause health issues</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                         <div>
                             <label className="form-label">Reason</label>

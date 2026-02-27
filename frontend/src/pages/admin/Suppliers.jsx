@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
-import { FiPlus, FiTrash2, FiEdit2, FiPhone, FiMail, FiMapPin, FiStar } from 'react-icons/fi';
+import { Plus as FiPlus, Trash2 as FiTrash2, Edit2 as FiEdit2, Phone as FiPhone, Mail as FiMail, MapPin as FiMapPin, Star as FiStar, User as FiUser } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Button } from '@/components/ui/button';
 
 export default function Suppliers() {
     const [suppliers, setSuppliers] = useState([]);
@@ -67,7 +68,7 @@ export default function Suppliers() {
                     <h1>Supplier Management</h1>
                     <p>Manage raw material suppliers and ratings</p>
                 </div>
-                <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}><FiPlus /> Add Supplier</button>
+                <Button onClick={() => setIsModalOpen(true)}><FiPlus /> Add Supplier</Button>
             </div>
 
             <div className="grid-list">
@@ -90,9 +91,9 @@ export default function Suppliers() {
                                 {s.materials.map(m => <span key={m._id} className="badge badge-blue">{m.name}</span>)}
                             </div>
                         </div>
-                        <div className="card-footer">
-                            <button className="btn-icon" onClick={() => openEdit(s)}><FiEdit2 /></button>
-                            <button className="btn-icon danger" onClick={() => handleDelete(s._id)}><FiTrash2 /></button>
+                        <div className="card-footer form-actions" style={{ justifyContent: 'flex-end', marginTop: 0 }}>
+                            <Button variant="outline" size="icon" onClick={() => openEdit(s)}><FiEdit2 /></Button>
+                            <Button variant="destructive" size="icon" onClick={() => handleDelete(s._id)}><FiTrash2 /></Button>
                         </div>
                     </div>
                 ))}
@@ -136,8 +137,8 @@ export default function Suppliers() {
                                 <input type="number" min="1" max="5" value={formData.rating} onChange={e => setFormData({ ...formData, rating: e.target.value })} />
                             </div>
                             <div className="form-actions">
-                                <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                                <button type="submit" className="btn btn-primary">Save</button>
+                                <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>Cancel</Button>
+                                <Button type="submit">Save</Button>
                             </div>
                         </form>
                     </div>
@@ -146,5 +147,3 @@ export default function Suppliers() {
         </div>
     );
 }
-
-import { FiUser } from 'react-icons/fi';

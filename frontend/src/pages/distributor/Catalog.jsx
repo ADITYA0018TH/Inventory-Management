@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
 import toast from 'react-hot-toast';
-import { FiShoppingCart } from 'react-icons/fi';
+import { ShoppingCart as FiShoppingCart } from 'lucide-react';
 
 export default function Catalog() {
     const [products, setProducts] = useState([]);

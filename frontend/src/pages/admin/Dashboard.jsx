@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { FiPackage, FiAlertTriangle, FiDollarSign, FiShoppingCart, FiLayers, FiClock } from 'react-icons/fi';
+import { Package as FiPackage, AlertTriangle as FiAlertTriangle, DollarSign as FiDollarSign, ShoppingCart as FiShoppingCart, Layers as FiLayers, Clock as FiClock } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const COLORS = ['#6366f1', '#22d3ee', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6'];

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FiSun, FiMoon } from 'react-icons/fi';
+import { Sun as FiSun, Moon as FiMoon } from 'lucide-react';
 
 export default function ThemeToggle() {
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');

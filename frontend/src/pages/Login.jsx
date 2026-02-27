@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import API from '../api';
+import { Eye, EyeOff } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function Login() {
     const [email, setEmail] = useState('');
@@ -83,11 +85,11 @@ export default function Login() {
                                 <label>Verification Code</label>
                                 <input type="text" value={otpCode} onChange={e => setOtpCode(e.target.value)} placeholder="000000" maxLength={6} required style={{ textAlign: 'center', fontSize: 24, letterSpacing: 8 }} />
                             </div>
-                            <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
+                            <Button type="submit" className="w-full" disabled={loading}>
                                 {loading ? 'Verifying...' : 'Verify & Sign In'}
-                            </button>
-                            <p className="auth-footer">
-                                <button type="button" style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer' }} onClick={() => { setRequires2FA(false); setOtpCode(''); }}>← Back to Login</button>
+                            </Button>
+                            <p className="auth-footer mt-4">
+                                <Button type="button" variant="ghost" onClick={() => { setRequires2FA(false); setOtpCode(''); }}>← Back to Login</Button>
                             </p>
                         </form>
                     ) : (
@@ -103,19 +105,15 @@ export default function Login() {
                                 <div className="password-input-wrapper">
                                     <input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
                                     <button type="button" className="password-toggle-btn" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? 'Hide password' : 'Show password'}>
-                                        {showPassword ? (
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" /><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" /><line x1="1" y1="1" x2="23" y2="23" /></svg>
-                                        ) : (
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
-                                        )}
+                                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                     </button>
                                 </div>
                             </div>
-                            <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
+                            <Button type="submit" className="w-full" disabled={loading}>
                                 {loading ? 'Signing in...' : 'Sign In'}
-                            </button>
+                            </Button>
                             <p className="auth-footer">
-                                Don't have an account? <Link to="/register">Register here</Link>
+                                Don't have an account? <Link to="/register" className="text-primary font-medium hover:underline">Register here</Link>
                             </p>
                         </form>
                     )}

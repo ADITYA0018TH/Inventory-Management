@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FiHome, FiPackage, FiLayers, FiShoppingCart, FiBox, FiLogOut, FiUser, FiSearch, FiUsers, FiFileText, FiSettings, FiTruck, FiAlertTriangle, FiMessageSquare, FiClock, FiShield, FiThermometer, FiTrendingUp, FiClipboard, FiMapPin, FiCamera, FiAlertCircle } from 'react-icons/fi';
+import { Home as FiHome, Package as FiPackage, Layers as FiLayers, ShoppingCart as FiShoppingCart, Box as FiBox, LogOut as FiLogOut, User as FiUser, Search as FiSearch, Users as FiUsers, FileText as FiFileText, Settings as FiSettings, Truck as FiTruck, AlertTriangle as FiAlertTriangle, MessageSquare as FiMessageSquare, Clock as FiClock, Shield as FiShield, Thermometer as FiThermometer, TrendingUp as FiTrendingUp, Clipboard as FiClipboard, MapPin as FiMapPin, Camera as FiCamera, AlertCircle as FiAlertCircle } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 
 export default function Sidebar({ isOpen, onClose }) {

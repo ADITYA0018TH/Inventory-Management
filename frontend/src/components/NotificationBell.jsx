@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { FiBell, FiCheck } from 'react-icons/fi';
+import { Bell as FiBell, Check as FiCheck } from 'lucide-react';
 import API from '../api';
 import { io } from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';

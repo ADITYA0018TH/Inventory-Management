@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
 import { AreaChart, Area, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { FiDownload } from 'react-icons/fi';
+import { Download as FiDownload } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function Reports() {

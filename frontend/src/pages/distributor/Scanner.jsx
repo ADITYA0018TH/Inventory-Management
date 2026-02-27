@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import API from '../../api';
-import { FiCamera, FiX } from 'react-icons/fi';
+import { Camera, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function Scanner() {
     const [scanning, setScanning] = useState(false);
@@ -80,23 +81,23 @@ export default function Scanner() {
                 <p style={{ color: 'var(--text-secondary)' }}>Scan a batch QR code to verify authenticity</p>
             </div>
 
-            <div className="card" style={{ textAlign: 'center', marginBottom: 20 }}>
+            <div className="card text-center mb-5">
                 {!scanning ? (
                     <div>
-                        <button className="btn btn-primary" onClick={startScanner} style={{ fontSize: 16, padding: '12px 32px' }}>
-                            <FiCamera style={{ marginRight: 8 }} /> Start Scanner
-                        </button>
-                        <div style={{ margin: '20px 0', color: 'var(--text-secondary)' }}>— or enter batch ID manually —</div>
-                        <form onSubmit={handleManualVerify} style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-                            <input className="form-input" value={manualInput} onChange={e => setManualInput(e.target.value)} placeholder="Enter Batch ID (e.g. AST-2026-001)" style={{ maxWidth: 300 }} />
-                            <button type="submit" className="btn btn-primary">Verify</button>
+                        <Button onClick={startScanner} size="lg">
+                            <Camera className="mr-2 h-4 w-4" /> Start Scanner
+                        </Button>
+                        <div className="my-5 text-muted-foreground">— or enter batch ID manually —</div>
+                        <form onSubmit={handleManualVerify} className="flex gap-2 justify-center">
+                            <input className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 max-w-[300px]" value={manualInput} onChange={e => setManualInput(e.target.value)} placeholder="Enter Batch ID (e.g. AST-2026-001)" />
+                            <Button type="submit">Verify</Button>
                         </form>
                     </div>
                 ) : (
                     <div>
-                        <button className="btn" onClick={stopScanner} style={{ marginBottom: 12 }}>
-                            <FiX style={{ marginRight: 4 }} /> Stop Scanner
-                        </button>
+                        <Button variant="outline" onClick={stopScanner} className="mb-3">
+                            <X className="mr-2 h-4 w-4" /> Stop Scanner
+                        </Button>
                     </div>
                 )}
                 <div id="qr-reader" ref={scannerRef} style={{ maxWidth: 400, margin: '0 auto' }} />
