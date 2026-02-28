@@ -76,7 +76,7 @@ export default function DistributorReturns() {
             <Modal open={modalOpen} setOpen={setModalOpen}>
                 <ModalBody>
                     <ModalContent className="max-w-[500px]">
-                        <h2 className="text-xl font-bold mb-4 text-white">Request Return</h2>
+                        <h2 className="text-xl font-bold mb-4">Request Return</h2>
                         <form onSubmit={handleSubmit}>
                             <div className="form-group">
                                 <label>Product</label>
@@ -103,7 +103,7 @@ export default function DistributorReturns() {
                                 <label>Reason</label>
                                 <textarea value={formData.reason} onChange={e => setFormData({ ...formData, reason: e.target.value })} required />
                             </div>
-                            <ModalFooter className="gap-2 mt-4 bg-transparent border-t border-white/10">
+                            <ModalFooter className="gap-2 mt-4">
                                 <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>Cancel</button>
                                 <button type="submit" className="btn btn-primary">Submit Request</button>
                             </ModalFooter>

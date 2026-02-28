@@ -67,11 +67,14 @@ export default function Warehouses() {
     if (loading) return <div className="loading-screen"><div className="spinner"></div></div>;
 
     return (
-        <div className="page-container">
+        <div className="page">
             <div className="page-header">
-                <h2>🏭 Multi-Warehouse Management</h2>
-                <div style={{ display: 'flex', gap: 8 }}>
-                    <button className="btn" onClick={() => setShowTransfer(!showTransfer)}>
+                <div>
+                    <h1>Multi-Warehouse Management</h1>
+                    <p>Manage warehouses and inter-warehouse transfers</p>
+                </div>
+                <div className="header-actions">
+                    <button className="btn btn-secondary" onClick={() => setShowTransfer(!showTransfer)}>
                         <FiArrowRight /> Transfer
                     </button>
                     <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
@@ -81,106 +84,98 @@ export default function Warehouses() {
             </div>
 
             {showForm && (
-                <div className="card" style={{ marginBottom: 20 }}>
+                <div className="card form-card section-gap">
                     <h3>Add Warehouse</h3>
-                    <form onSubmit={handleCreate} style={{ display: 'grid', gap: 12 }}>
-                        <div>
-                            <label className="form-label">Name</label>
-                            <input className="form-input" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required placeholder="e.g. Main Warehouse" />
+                    <form onSubmit={handleCreate}>
+                        <div className="form-group">
+                            <label>Name</label>
+                            <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required placeholder="e.g. Main Warehouse" />
                         </div>
-                        <div>
-                            <label className="form-label">Location</label>
-                            <input className="form-input" value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} required placeholder="e.g. Mumbai, Maharashtra" />
+                        <div className="form-group">
+                            <label>Location</label>
+                            <input value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} required placeholder="e.g. Mumbai, Maharashtra" />
                         </div>
-                        <div>
-                            <label className="form-label">Capacity (units)</label>
-                            <input type="number" className="form-input" value={form.capacity} onChange={e => setForm({ ...form, capacity: e.target.value })} />
+                        <div className="form-group">
+                            <label>Capacity (units)</label>
+                            <input type="number" value={form.capacity} onChange={e => setForm({ ...form, capacity: e.target.value })} />
                         </div>
-                        <button type="submit" className="btn btn-primary">Create Warehouse</button>
+                        <div className="form-actions">
+                            <button type="submit" className="btn btn-primary">Create Warehouse</button>
+                            <button type="button" className="btn btn-ghost" onClick={() => setShowForm(false)}>Cancel</button>
+                        </div>
                     </form>
                 </div>
             )}
 
             {showTransfer && (
-                <div className="card" style={{ marginBottom: 20 }}>
+                <div className="card form-card section-gap">
                     <h3>Inter-Warehouse Transfer</h3>
-                    <form onSubmit={handleTransfer} style={{ display: 'grid', gap: 12 }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                            <div>
-                                <label className="form-label">From Warehouse</label>
+                    <form onSubmit={handleTransfer}>
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>From Warehouse</label>
                                 <Select value={transferForm.fromWarehouseId} onValueChange={(val) => setTransferForm({ ...transferForm, fromWarehouseId: val })}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select source..." />
-                                    </SelectTrigger>
+                                    <SelectTrigger><SelectValue placeholder="Select source..." /></SelectTrigger>
                                     <SelectContent>
-                                        {warehouses.map(w => (
-                                            <SelectItem key={w._id} value={w._id}>{w.name}</SelectItem>
-                                        ))}
+                                        {warehouses.map(w => <SelectItem key={w._id} value={w._id}>{w.name}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <div>
-                                <label className="form-label">To Warehouse</label>
+                            <div className="form-group">
+                                <label>To Warehouse</label>
                                 <Select value={transferForm.toWarehouseId} onValueChange={(val) => setTransferForm({ ...transferForm, toWarehouseId: val })}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select destination..." />
-                                    </SelectTrigger>
+                                    <SelectTrigger><SelectValue placeholder="Select destination..." /></SelectTrigger>
                                     <SelectContent>
-                                        {warehouses.filter(w => w._id !== transferForm.fromWarehouseId).map(w => (
-                                            <SelectItem key={w._id} value={w._id}>{w.name}</SelectItem>
-                                        ))}
+                                        {warehouses.filter(w => w._id !== transferForm.fromWarehouseId).map(w => <SelectItem key={w._id} value={w._id}>{w.name}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
                             </div>
                         </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                            <div>
-                                <label className="form-label">Material</label>
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>Material</label>
                                 <Select value={transferForm.materialId} onValueChange={(val) => setTransferForm({ ...transferForm, materialId: val })}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select material..." />
-                                    </SelectTrigger>
+                                    <SelectTrigger><SelectValue placeholder="Select material..." /></SelectTrigger>
                                     <SelectContent>
-                                        {materials.map(m => (
-                                            <SelectItem key={m._id} value={m._id}>{m.name}</SelectItem>
-                                        ))}
+                                        {materials.map(m => <SelectItem key={m._id} value={m._id}>{m.name}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <div>
-                                <label className="form-label">Quantity</label>
-                                <input type="number" className="form-input" value={transferForm.quantity} onChange={e => setTransferForm({ ...transferForm, quantity: e.target.value })} required />
+                            <div className="form-group">
+                                <label>Quantity</label>
+                                <input type="number" value={transferForm.quantity} onChange={e => setTransferForm({ ...transferForm, quantity: e.target.value })} required />
                             </div>
                         </div>
-                        <button type="submit" className="btn btn-primary">Execute Transfer</button>
+                        <div className="form-actions">
+                            <button type="submit" className="btn btn-primary">Execute Transfer</button>
+                            <button type="button" className="btn btn-ghost" onClick={() => setShowTransfer(false)}>Cancel</button>
+                        </div>
                     </form>
                 </div>
             )}
 
-            {/* Warehouse Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16, marginBottom: 20 }}>
+            <div className="grid-auto-fill-280 section-gap">
                 {warehouses.map(wh => {
                     const utilization = wh.capacity > 0 ? ((wh.totalQuantity / wh.capacity) * 100).toFixed(0) : 0;
+                    const barColor = utilization > 80 ? 'var(--danger)' : utilization > 50 ? 'var(--warning)' : 'var(--success)';
                     return (
-                        <div key={wh._id} className="card" style={{ cursor: 'pointer', borderLeft: `4px solid ${utilization > 80 ? '#ef4444' : utilization > 50 ? '#f59e0b' : '#10b981'}` }} onClick={() => loadStock(wh._id)}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                        <div key={wh._id} className={`card warehouse-card card-bordered-left ${utilization > 80 ? 'card-border-red' : utilization > 50 ? 'card-border-amber' : 'card-border-green'}`} onClick={() => loadStock(wh._id)}>
+                            <div className="card-header">
                                 <div>
-                                    <h3 style={{ margin: '0 0 4px' }}>{wh.name}</h3>
-                                    <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: 13, display: 'flex', alignItems: 'center', gap: 4 }}>
-                                        <FiMapPin size={12} /> {wh.location}
-                                    </p>
+                                    <h3 className="mb-0">{wh.name}</h3>
+                                    <p className="text-sm text-secondary-color flex-row mt-2"><FiMapPin size={12} /> {wh.location}</p>
                                 </div>
-                                <span className={`status-badge ${wh.isActive ? 'status-Delivered' : 'status-Cancelled'}`}>
+                                <span className={`status-badge ${wh.isActive ? 'active' : 'inactive'}`}>
                                     {wh.isActive ? 'Active' : 'Inactive'}
                                 </span>
                             </div>
-                            <div style={{ marginTop: 12 }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
-                                    <span><FiBox style={{ marginRight: 4 }} />{wh.stockItems} items</span>
+                            <div className="mt-3">
+                                <div className="flex-between text-xs mb-2">
+                                    <span className="flex-row gap-2"><FiBox size={12} />{wh.stockItems} items</span>
                                     <span>{utilization}% utilized</span>
                                 </div>
-                                <div style={{ background: 'var(--bg-secondary)', borderRadius: 4, height: 6, overflow: 'hidden' }}>
-                                    <div style={{ width: `${Math.min(utilization, 100)}%`, height: '100%', background: utilization > 80 ? '#ef4444' : utilization > 50 ? '#f59e0b' : '#10b981', borderRadius: 4 }} />
+                                <div className="warehouse-progress">
+                                    <div className="warehouse-progress-bar" style={{ width: `${Math.min(utilization, 100)}%`, background: barColor }} />
                                 </div>
                             </div>
                         </div>
@@ -188,27 +183,24 @@ export default function Warehouses() {
                 })}
             </div>
 
-            {/* Stock Detail */}
             {selectedWarehouse && (
                 <div className="card">
-                    <h3>📦 Stock in {warehouses.find(w => w._id === selectedWarehouse)?.name}</h3>
-                    <div className="table-container">
-                        <table>
-                            <thead><tr><th>Material</th><th>Quantity</th><th>Unit</th><th>Last Updated</th></tr></thead>
-                            <tbody>
-                                {warehouseStock.length === 0 ? (
-                                    <tr><td colSpan={4} style={{ textAlign: 'center', padding: 30 }}>No stock in this warehouse</td></tr>
-                                ) : warehouseStock.map(s => (
-                                    <tr key={s._id}>
-                                        <td><strong>{s.materialId?.name}</strong></td>
-                                        <td>{s.quantity}</td>
-                                        <td>{s.materialId?.unit}</td>
-                                        <td>{new Date(s.lastUpdated).toLocaleString()}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                    <h3>Stock in {warehouses.find(w => w._id === selectedWarehouse)?.name}</h3>
+                    <table className="data-table">
+                        <thead><tr><th>Material</th><th>Quantity</th><th>Unit</th><th>Last Updated</th></tr></thead>
+                        <tbody>
+                            {warehouseStock.length === 0 ? (
+                                <tr><td colSpan={4} className="empty-table">No stock in this warehouse</td></tr>
+                            ) : warehouseStock.map(s => (
+                                <tr key={s._id}>
+                                    <td className="td-bold">{s.materialId?.name}</td>
+                                    <td>{s.quantity}</td>
+                                    <td>{s.materialId?.unit}</td>
+                                    <td className="text-muted">{new Date(s.lastUpdated).toLocaleString()}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             )}
         </div>

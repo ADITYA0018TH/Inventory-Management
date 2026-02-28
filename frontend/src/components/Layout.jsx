@@ -14,7 +14,11 @@ export default function Layout() {
             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
             <div className="main-wrapper">
                 <header className="top-bar">
-                    <button className="mobile-toggle" onClick={() => setIsSidebarOpen(true)}>
+                    <button
+                        className="mobile-toggle"
+                        onClick={() => setIsSidebarOpen((prev) => !prev)}
+                        aria-label={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+                    >
                         <FiMenu />
                     </button>
                     <SearchBar />

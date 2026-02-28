@@ -75,10 +75,12 @@ export default function Scanner() {
     }, []);
 
     return (
-        <div className="page-container">
+        <div className="page">
             <div className="page-header">
-                <h2>📷 QR Code Scanner</h2>
-                <p style={{ color: 'var(--text-secondary)' }}>Scan a batch QR code to verify authenticity</p>
+                <div>
+                    <h1>QR Code Scanner</h1>
+                    <p>Scan a batch QR code to verify authenticity</p>
+                </div>
             </div>
 
             <div className="card text-center mb-5">
@@ -89,7 +91,7 @@ export default function Scanner() {
                         </Button>
                         <div className="my-5 text-muted-foreground">— or enter batch ID manually —</div>
                         <form onSubmit={handleManualVerify} className="flex gap-2 justify-center">
-                            <input className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 max-w-[300px]" value={manualInput} onChange={e => setManualInput(e.target.value)} placeholder="Enter Batch ID (e.g. AST-2026-001)" />
+                            <input className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 max-w-[300px]" value={manualInput} onChange={e => setManualInput(e.target.value)} placeholder="Enter Batch ID (e.g. AST-2026-001)" />
                             <Button type="submit">Verify</Button>
                         </form>
                     </div>
@@ -103,35 +105,31 @@ export default function Scanner() {
                 <div id="qr-reader" ref={scannerRef} style={{ maxWidth: 400, margin: '0 auto' }} />
             </div>
 
-            {/* Verification Result */}
             {result && (
-                <div className="card" style={{ borderLeft: `4px solid ${result.verified ? '#10b981' : '#ef4444'}` }}>
-                    <h3>{result.verified ? '✅ Verified — Authentic Product' : '❌ Verification Failed'}</h3>
+                <div className={`card card-bordered-left ${result.verified ? 'card-border-green' : 'card-border-red'}`}>
+                    <h3>{result.verified ? 'Verified — Authentic Product' : 'Verification Failed'}</h3>
                     {result.verified && result.batch ? (
-                        <div style={{ display: 'grid', gap: 8 }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                                <div><strong>Batch ID:</strong> {result.batch.batchId}</div>
-                                <div><strong>Product:</strong> {result.batch.productId?.name}</div>
-                                <div><strong>Type:</strong> {result.batch.productId?.type}</div>
-                                <div><strong>SKU:</strong> {result.batch.productId?.sku}</div>
-                                <div><strong>Qty Produced:</strong> {result.batch.quantityProduced}</div>
-                                <div><strong>Status:</strong> <span className={`status-badge status-${result.batch.status === 'Released' ? 'Delivered' : 'Pending'}`}>{result.batch.status}</span></div>
-                                <div><strong>Mfg Date:</strong> {new Date(result.batch.mfgDate).toLocaleDateString()}</div>
-                                <div><strong>Exp Date:</strong> {new Date(result.batch.expDate).toLocaleDateString()}</div>
-                            </div>
+                        <div className="grid-2 mt-3">
+                            <div><strong>Batch ID:</strong> {result.batch.batchId}</div>
+                            <div><strong>Product:</strong> {result.batch.productId?.name}</div>
+                            <div><strong>Type:</strong> {result.batch.productId?.type}</div>
+                            <div><strong>SKU:</strong> {result.batch.productId?.sku}</div>
+                            <div><strong>Qty Produced:</strong> {result.batch.quantityProduced}</div>
+                            <div><strong>Status:</strong> <span className={`status-badge ${result.batch.status === 'Released' ? 'delivered' : 'pending'}`}>{result.batch.status}</span></div>
+                            <div><strong>Mfg Date:</strong> {new Date(result.batch.mfgDate).toLocaleDateString()}</div>
+                            <div><strong>Exp Date:</strong> {new Date(result.batch.expDate).toLocaleDateString()}</div>
                         </div>
                     ) : (
-                        <p style={{ color: '#ef4444' }}>{result.message || 'This product could not be verified.'}</p>
+                        <p className="text-danger">{result.message || 'This product could not be verified.'}</p>
                     )}
                 </div>
             )}
 
-            {/* Blockchain Chain Verification */}
             {chain && (
-                <div className="card" style={{ marginTop: 16, borderLeft: `4px solid ${chain.isValid ? '#10b981' : '#ef4444'}` }}>
-                    <h3>🔗 Supply Chain Integrity</h3>
-                    <p style={{ color: chain.isValid ? '#10b981' : '#ef4444', fontWeight: 600 }}>{chain.message}</p>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: 13 }}>Chain length: {chain.chainLength} blocks</p>
+                <div className={`card mt-4 card-bordered-left ${chain.isValid ? 'card-border-green' : 'card-border-red'}`}>
+                    <h3>Supply Chain Integrity</h3>
+                    <p className={`font-semibold ${chain.isValid ? 'text-success' : 'text-danger'}`}>{chain.message}</p>
+                    <p className="text-xs text-secondary-color">Chain length: {chain.chainLength} blocks</p>
                 </div>
             )}
         </div>

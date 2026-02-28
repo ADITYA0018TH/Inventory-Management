@@ -4,7 +4,16 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Package as FiPackage, AlertTriangle as FiAlertTriangle, DollarSign as FiDollarSign, ShoppingCart as FiShoppingCart, Layers as FiLayers, Clock as FiClock } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const COLORS = ['#6366f1', '#22d3ee', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6'];
+const COLORS = ['#7c9dff', '#22d3ee', '#fbbf24', '#2dd4bf', '#f87171', '#8b8cff'];
+
+const tooltipStyle = {
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border)',
+    borderRadius: '14px',
+    color: 'var(--text-primary)',
+    boxShadow: '0 12px 30px rgba(2,8,23,0.24)',
+    fontSize: 13,
+};
 
 export default function Dashboard() {
     const [stats, setStats] = useState(null);
@@ -54,11 +63,12 @@ export default function Dashboard() {
     return (
         <div className="page">
             <div className="page-header">
-                <h1>Dashboard</h1>
-                <p>Overview of your manufacturing operations</p>
+                <div>
+                    <h1>Dashboard</h1>
+                    <p>Overview of your manufacturing operations</p>
+                </div>
             </div>
 
-            {/* Stats Cards */}
             <div className="stats-grid">
                 <div className="stat-card stat-purple">
                     <div className="stat-icon"><FiPackage /></div>
@@ -91,17 +101,16 @@ export default function Dashboard() {
             </div>
 
             <div className="dashboard-grid">
-                {/* Production Chart */}
                 <div className="card chart-card">
                     <h3>Production Volume by Product</h3>
                     {productionData.length > 0 ? (
                         <ResponsiveContainer width="100%" height={300}>
                             <BarChart data={productionData}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#2d2d3f" />
-                                <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} />
-                                <YAxis stroke="#94a3b8" fontSize={12} />
-                                <Tooltip contentStyle={{ background: '#1e1e2e', border: '1px solid #333', borderRadius: '8px', color: '#fff' }} />
-                                <Bar dataKey="quantity" fill="#6366f1" radius={[6, 6, 0, 0]} />
+                                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                                <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
+                                <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
+                                <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'color-mix(in srgb, var(--accent) 8%, transparent)' }} />
+                                <Bar dataKey="quantity" fill="var(--accent)" radius={[8, 8, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     ) : (
@@ -109,16 +118,15 @@ export default function Dashboard() {
                     )}
                 </div>
 
-                {/* Order Status Pie */}
                 <div className="card chart-card">
                     <h3>Order Status</h3>
                     {stats?.totalOrders > 0 ? (
                         <ResponsiveContainer width="100%" height={300}>
                             <PieChart>
-                                <Pie data={orderChartData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={4} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
+                                <Pie data={orderChartData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={4} dataKey="value" label={({ name, value }) => `${name}: ${value}`} stroke="none">
                                     {orderChartData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                                 </Pie>
-                                <Tooltip contentStyle={{ background: '#1e1e2e', border: '1px solid #333', borderRadius: '8px', color: '#fff' }} />
+                                <Tooltip contentStyle={tooltipStyle} />
                             </PieChart>
                         </ResponsiveContainer>
                     ) : (
@@ -126,9 +134,8 @@ export default function Dashboard() {
                     )}
                 </div>
 
-                {/* Low Stock Alerts */}
                 <div className="card alert-card">
-                    <h3><FiAlertTriangle className="text-amber" /> Low Stock Alerts</h3>
+                    <h3><FiAlertTriangle className="text-warning" /> Low Stock Alerts</h3>
                     {alerts.length > 0 ? (
                         <div className="alert-list">
                             {alerts.map(a => (
@@ -139,13 +146,12 @@ export default function Dashboard() {
                             ))}
                         </div>
                     ) : (
-                        <div className="empty-state success">✅ All materials above threshold</div>
+                        <div className="empty-state success">All materials above threshold</div>
                     )}
                 </div>
 
-                {/* Expiring Batches */}
                 <div className="card alert-card">
-                    <h3><FiClock className="text-amber" /> Expiring in 30 Days</h3>
+                    <h3><FiClock className="text-warning" /> Expiring in 30 Days</h3>
                     {expiring.length > 0 ? (
                         <div className="alert-list">
                             {expiring.map(b => (
@@ -156,7 +162,7 @@ export default function Dashboard() {
                             ))}
                         </div>
                     ) : (
-                        <div className="empty-state success">✅ No batches expiring soon</div>
+                        <div className="empty-state success">No batches expiring soon</div>
                     )}
                 </div>
             </div>

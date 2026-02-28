@@ -33,67 +33,66 @@ export default function Reports() {
         window.open(`http://localhost:5001/api/export/${type}`, '_blank');
     };
 
+    const tooltipStyle = {
+        contentStyle: { background: 'var(--clay-surface)', border: '1px solid var(--border)', borderRadius: 8 },
+        labelStyle: { color: 'var(--text-primary)' },
+        itemStyle: { color: 'var(--text-secondary)' },
+    };
+
     return (
         <div className="page">
             <div className="page-header">
-                <h1>Reports & Analytics</h1>
-                <p>Data-driven insights for decision making</p>
+                <div>
+                    <h1>Reports & Analytics</h1>
+                    <p>Data-driven insights for decision making</p>
+                </div>
                 <button className="btn btn-secondary" onClick={() => downloadReport('orders')}><FiDownload /> Export All Data</button>
             </div>
 
             <div className="dashboard-grid">
-                {/* Sales Trend */}
                 <div className="card chart-card" style={{ gridColumn: 'span 2' }}>
-                    <div className="card-header">
-                        <h3>Monthly Revenue Trend</h3>
-                    </div>
+                    <div className="card-header"><h3>Monthly Revenue Trend</h3></div>
                     <ResponsiveContainer width="100%" height={300}>
                         <AreaChart data={salesData}>
                             <defs>
                                 <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                                    <stop offset="5%" stopColor="var(--success)" stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor="var(--success)" stopOpacity={0} />
                                 </linearGradient>
                             </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#2d2d3f" />
-                            <XAxis dataKey="month" stroke="#94a3b8" />
-                            <YAxis stroke="#94a3b8" />
-                            <Tooltip contentStyle={{ background: '#1e1e2e', border: '1px solid #333' }} />
-                            <Area type="monotone" dataKey="revenue" stroke="#10b981" fillOpacity={1} fill="url(#colorRevenue)" />
+                            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                            <XAxis dataKey="month" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
+                            <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
+                            <Tooltip {...tooltipStyle} />
+                            <Area type="monotone" dataKey="revenue" stroke="var(--success)" fillOpacity={1} fill="url(#colorRevenue)" />
                         </AreaChart>
                     </ResponsiveContainer>
                 </div>
 
-                {/* Production Volume */}
                 <div className="card chart-card">
-                    <div className="card-header">
-                        <h3>Production Output</h3>
-                    </div>
+                    <div className="card-header"><h3>Production Output</h3></div>
                     <ResponsiveContainer width="100%" height={300}>
                         <BarChart data={productionData}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#2d2d3f" />
-                            <XAxis dataKey="month" stroke="#94a3b8" />
-                            <YAxis stroke="#94a3b8" />
-                            <Tooltip contentStyle={{ background: '#1e1e2e', border: '1px solid #333' }} />
-                            <Bar dataKey="totalUnits" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                            <XAxis dataKey="month" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
+                            <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
+                            <Tooltip {...tooltipStyle} />
+                            <Bar dataKey="totalUnits" fill="var(--accent)" radius={[8, 8, 0, 0]} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
 
-                {/* Stock Consumption */}
                 <div className="card chart-card" style={{ gridColumn: 'span 3' }}>
-                    <div className="card-header">
-                        <h3>Raw Material Stock vs Usage</h3>
-                    </div>
+                    <div className="card-header"><h3>Raw Material Stock vs Usage</h3></div>
                     <ResponsiveContainer width="100%" height={300}>
                         <BarChart data={stockData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#2d2d3f" />
-                            <XAxis dataKey="name" stroke="#94a3b8" />
-                            <YAxis stroke="#94a3b8" />
-                            <Tooltip contentStyle={{ background: '#1e1e2e', border: '1px solid #333' }} />
+                            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                            <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
+                            <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
+                            <Tooltip {...tooltipStyle} />
                             <Legend />
-                            <Bar dataKey="currentStock" name="Current Stock" fill="#22d3ee" stackId="a" />
-                            <Bar dataKey="usage" name="Est. Usage" fill="#f59e0b" stackId="a" />
+                            <Bar dataKey="currentStock" name="Current Stock" fill="#22d3ee" stackId="a" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="usage" name="Est. Usage" fill="var(--warning)" stackId="a" radius={[4, 4, 0, 0]} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>

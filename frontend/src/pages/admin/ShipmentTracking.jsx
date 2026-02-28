@@ -90,7 +90,7 @@ export default function ShipmentTracking() {
             <Modal open={modalOpen} setOpen={setModalOpen}>
                 <ModalBody>
                     <ModalContent className="max-w-[400px]">
-                        <h2 className="text-xl font-bold mb-4 text-white">Update Tracking — {selectedOrder?.invoiceNumber}</h2>
+                        <h2 className="text-xl font-bold mb-4">Update Tracking — {selectedOrder?.invoiceNumber}</h2>
                         <form onSubmit={handleUpdate}>
                             <div className="form-group">
                                 <label>Current Status</label>
@@ -114,7 +114,7 @@ export default function ShipmentTracking() {
                                 <label>Note</label>
                                 <textarea value={updateData.note} onChange={e => setUpdateData({ ...updateData, note: e.target.value })} />
                             </div>
-                            <ModalFooter className="gap-2 mt-4 bg-transparent border-t border-white/10">
+                            <ModalFooter className="gap-2 mt-4">
                                 <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>Cancel</button>
                                 <button type="submit" className="btn btn-primary">Update</button>
                             </ModalFooter>

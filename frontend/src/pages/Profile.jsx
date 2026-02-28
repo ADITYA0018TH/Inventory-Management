@@ -134,17 +134,17 @@ export default function Profile() {
                     <h3><FiShield /> Two-Factor Authentication</h3>
                     {profile.twoFactorEnabled ? (
                         <div>
-                            <p style={{ color: '#10b981', fontWeight: 500 }}>✅ 2FA is enabled on your account</p>
-                            <p style={{ color: 'var(--text-secondary)', fontSize: 13 }}>Your account is protected with TOTP-based two-factor authentication.</p>
-                            <button className="btn" onClick={disable2FA} style={{ marginTop: 8 }}>Disable 2FA</button>
+                            <p className="text-success font-medium">2FA is enabled on your account</p>
+                            <p className="text-xs text-secondary-color">Your account is protected with TOTP-based two-factor authentication.</p>
+                            <button className="btn btn-secondary mt-2" onClick={disable2FA}>Disable 2FA</button>
                         </div>
                     ) : twoFASetup ? (
                         <div>
-                            <p style={{ marginBottom: 12 }}>Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.):</p>
-                            <div style={{ textAlign: 'center', marginBottom: 16 }}>
-                                <img src={twoFASetup.qrCode} alt="2FA QR Code" style={{ maxWidth: 200, borderRadius: 8 }} />
+                            <p className="mb-3">Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.):</p>
+                            <div className="text-center mb-4">
+                                <img src={twoFASetup.qrCode} alt="2FA QR Code" style={{ maxWidth: 200, borderRadius: 8, margin: '0 auto' }} />
                             </div>
-                            <p style={{ fontSize: 12, color: 'var(--text-secondary)', wordBreak: 'break-all' }}>
+                            <p className="text-xs text-secondary-color" style={{ wordBreak: 'break-all' }}>
                                 Manual key: <code>{twoFASetup.secret}</code>
                             </p>
                             <form onSubmit={verify2FA}>
@@ -157,8 +157,8 @@ export default function Profile() {
                         </div>
                     ) : (
                         <div>
-                            <p style={{ color: 'var(--text-secondary)' }}>Add an extra layer of security to your account using a TOTP authenticator app.</p>
-                            <button className="btn btn-primary" onClick={setup2FA} style={{ marginTop: 8 }}><FiShield /> Enable 2FA</button>
+                            <p className="text-secondary-color">Add an extra layer of security to your account using a TOTP authenticator app.</p>
+                            <button className="btn btn-primary mt-2" onClick={setup2FA}><FiShield /> Enable 2FA</button>
                         </div>
                     )}
                 </div>

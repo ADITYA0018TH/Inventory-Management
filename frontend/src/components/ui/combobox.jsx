@@ -17,6 +17,23 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 
+const glassTriggerStyle = {
+    background: "var(--glass-elevated)",
+    borderColor: "var(--glass-border)",
+    boxShadow: "var(--glass-shadow-soft)",
+    backdropFilter: "blur(10px)",
+    WebkitBackdropFilter: "blur(10px)",
+}
+
+const glassContentStyle = {
+    background: "var(--glass-elevated)",
+    border: "1px solid var(--glass-border)",
+    boxShadow: "var(--glass-shadow)",
+    borderRadius: "20px",
+    backdropFilter: "blur(14px)",
+    WebkitBackdropFilter: "blur(14px)",
+}
+
 export function Combobox({ options = [], value, onChange, placeholder = "Select option...", className }) {
     const [open, setOpen] = React.useState(false)
 
@@ -28,21 +45,20 @@ export function Combobox({ options = [], value, onChange, placeholder = "Select 
                     role="combobox"
                     aria-expanded={open}
                     className={cn(
-                        "w-full justify-between font-normal",
+                        "w-full justify-between rounded-[18px] font-normal text-[var(--text-primary)] transition-all",
+                        "hover:border-[color:color-mix(in_srgb,var(--accent)_42%,var(--glass-border))]",
+                        "hover:shadow-[var(--glass-shadow-hover)]",
                         className
                     )}
                     style={{
-                        backgroundColor: 'var(--bg-input)',
-                        borderColor: 'var(--border)',
+                        ...glassTriggerStyle,
                         color: value ? 'var(--text-primary)' : 'var(--text-muted)',
-                        borderRadius: 'var(--radius-sm)',
                         padding: '10px 14px',
                         fontSize: '14px',
                         height: 'auto',
                         minHeight: '42px',
                         display: 'flex',
-                        alignItems: 'center',
-                        boxShadow: 'none'
+                        alignItems: 'center'
                     }}
                 >
                     <span className="truncate">
@@ -56,12 +72,7 @@ export function Combobox({ options = [], value, onChange, placeholder = "Select 
             <PopoverContent
                 className="w-[--radix-popover-trigger-width] p-0 z-[100]"
                 align="start"
-                style={{
-                    backgroundColor: 'var(--bg-secondary)',
-                    border: '1px solid var(--border)',
-                    boxShadow: '0 15px 35px rgba(0,0,0,0.2)',
-                    borderRadius: 'var(--radius-sm)'
-                }}
+                style={glassContentStyle}
             >
                 <Command className="bg-transparent">
                     <CommandInput placeholder={`Search...`} className="border-none" style={{ color: 'var(--text-primary)', fontSize: '14px' }} />
@@ -78,8 +89,13 @@ export function Combobox({ options = [], value, onChange, placeholder = "Select 
                                         onChange(option.value === value ? "" : option.value)
                                         setOpen(false)
                                     }}
-                                    className="data-[selected=true]:bg-[var(--text-muted)] cursor-pointer"
-                                    style={{ color: 'var(--text-primary)', fontSize: '14px', padding: '10px 14px' }}
+                                    className="cursor-pointer rounded-[12px] data-[selected=true]:bg-[color:color-mix(in_srgb,var(--accent)_16%,transparent)]"
+                                    style={{
+                                        color: 'var(--text-primary)',
+                                        fontSize: '14px',
+                                        padding: '10px 14px',
+                                        boxShadow: 'var(--glass-shadow-soft)'
+                                    }}
                                 >
                                     <Check
                                         className={cn(

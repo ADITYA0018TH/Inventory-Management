@@ -143,17 +143,17 @@ export default function Batches() {
                     <ModalContent className="items-center text-center max-w-[400px]">
                         {selectedBatch && (
                             <>
-                                <h3 className="text-xl font-bold mb-4 text-white">QR Code — {selectedBatch.batchId}</h3>
+                                <h3 className="text-xl font-bold mb-4">QR Code — {selectedBatch.batchId}</h3>
                                 <div className="qr-container mx-auto mb-6 bg-white p-4 rounded-xl inline-block shadow-lg">
                                     <img src={selectedBatch.qrCodeData} alt="QR Code" className="w-48 h-48 max-w-none" />
                                 </div>
-                                <div className="qr-details text-sm text-left grid grid-cols-2 gap-4 w-full mb-6 bg-neutral-900 border border-neutral-800 p-4 rounded-lg">
-                                    <p><span className="text-neutral-400 block mb-1">Product</span><span className="text-white font-medium">{selectedBatch.productId?.name}</span></p>
-                                    <p><span className="text-neutral-400 block mb-1">Quantity</span><span className="text-white font-medium">{selectedBatch.quantityProduced?.toLocaleString()}</span></p>
-                                    <p><span className="text-neutral-400 block mb-1">Mfg Date</span><span className="text-white font-medium">{new Date(selectedBatch.mfgDate).toLocaleDateString()}</span></p>
-                                    <p><span className="text-neutral-400 block mb-1">Exp Date</span><span className="text-white font-medium">{new Date(selectedBatch.expDate).toLocaleDateString()}</span></p>
+                                <div className="qr-details text-sm text-left grid grid-cols-2 gap-4 w-full mb-6 p-4 rounded-lg" style={{ background: 'var(--clay-surface)', border: '1px solid var(--clay-border)' }}>
+                                    <p><span className="block mb-1 text-secondary-color">Product</span><span className="font-medium">{selectedBatch.productId?.name}</span></p>
+                                    <p><span className="block mb-1 text-secondary-color">Quantity</span><span className="font-medium">{selectedBatch.quantityProduced?.toLocaleString()}</span></p>
+                                    <p><span className="block mb-1 text-secondary-color">Mfg Date</span><span className="font-medium">{new Date(selectedBatch.mfgDate).toLocaleDateString()}</span></p>
+                                    <p><span className="block mb-1 text-secondary-color">Exp Date</span><span className="font-medium">{new Date(selectedBatch.expDate).toLocaleDateString()}</span></p>
                                 </div>
-                                <ModalFooter className="bg-transparent flex justify-center w-full mt-2">
+                                <ModalFooter className="flex justify-center w-full mt-2" style={{ background: 'transparent', border: 'none' }}>
                                     <button className="btn btn-ghost w-full" onClick={() => setSelectedBatch(null)}>Close</button>
                                 </ModalFooter>
                             </>

@@ -47,9 +47,10 @@ export const ModalTrigger = ({
   return (
     <button
       className={cn(
-        "px-4 py-2 rounded-md text-black dark:text-white text-center relative overflow-hidden",
+        "px-4 py-2 rounded-md text-center relative overflow-hidden",
         className
       )}
+      style={{ color: 'var(--text-primary)' }}
       onClick={() => setOpen(true)}>
       {children}
     </button>
@@ -95,9 +96,10 @@ export const ModalBody = ({
           <motion.div
             ref={modalRef}
             className={cn(
-              "w-full max-w-[95%] md:max-w-[40%] bg-white dark:bg-neutral-950 border border-transparent dark:border-neutral-800 rounded-xl md:rounded-2xl relative z-50 flex flex-col overflow-hidden",
+              "w-full max-w-[95%] md:max-w-[40%] rounded-xl md:rounded-2xl relative z-50 flex flex-col overflow-hidden",
               className
             )}
+            style={{ background: 'var(--glass-elevated)', border: '1px solid var(--glass-border)', boxShadow: 'var(--glass-shadow)', color: 'var(--text-primary)', backdropFilter: 'blur(var(--glass-blur))', WebkitBackdropFilter: 'blur(var(--glass-blur))' }}
             initial={{
               opacity: 0,
               scale: 0.5,
@@ -146,7 +148,8 @@ export const ModalFooter = ({
 }) => {
   return (
     <div
-      className={cn("flex justify-end p-4 bg-neutral-100 dark:bg-neutral-900 rounded-b-xl md:rounded-b-2xl", className)}>
+      className={cn("flex justify-end p-4 rounded-b-xl md:rounded-b-2xl", className)}
+      style={{ background: 'var(--glass-surface)', borderTop: '1px solid var(--glass-border)' }}>
       {children}
     </div>
   );
@@ -175,7 +178,7 @@ const Overlay = ({
 const CloseIcon = () => {
   const { setOpen } = useModal();
   return (
-    <button onClick={() => setOpen(false)} className="absolute top-4 right-4 group">
+    <button onClick={() => setOpen(false)} className="absolute top-4 right-4 group" style={{ color: 'var(--text-secondary)' }}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -186,7 +189,7 @@ const CloseIcon = () => {
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="text-black dark:text-white h-4 w-4 group-hover:scale-125 group-hover:rotate-3 transition duration-200">
+        className="h-4 w-4 group-hover:scale-125 group-hover:rotate-3 transition duration-200">
         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
         <path d="M18 6l-12 12" />
         <path d="M6 6l12 12" />

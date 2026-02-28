@@ -48,16 +48,19 @@ export default function PurchaseOrders() {
     if (loading) return <div className="loading-screen"><div className="spinner"></div></div>;
 
     return (
-        <div className="page-container">
+        <div className="page">
             <div className="page-header">
-                <h2>📋 Purchase Orders</h2>
+                <div>
+                    <h1>Purchase Orders</h1>
+                    <p>Manage supplier purchase orders and auto-restock</p>
+                </div>
                 <button className="btn btn-primary" onClick={autoGenerate} disabled={generating}>
-                    {generating ? 'Generating...' : '⚡ Auto-Generate from Low Stock'}
+                    {generating ? 'Generating...' : 'Auto-Generate from Low Stock'}
                 </button>
             </div>
 
-            <div className="table-container">
-                <table>
+            <div className="card">
+                <table className="data-table">
                     <thead>
                         <tr>
                             <th>PO Number</th><th>Supplier</th><th>Items</th><th>Total</th>
@@ -66,35 +69,37 @@ export default function PurchaseOrders() {
                     </thead>
                     <tbody>
                         {pos.length === 0 ? (
-                            <tr><td colSpan={7} style={{ textAlign: 'center', padding: 40 }}>No purchase orders yet. Click "Auto-Generate" to create from low stock alerts.</td></tr>
+                            <tr><td colSpan={7} className="empty-table">No purchase orders yet. Click "Auto-Generate" to create from low stock alerts.</td></tr>
                         ) : pos.map(po => (
                             <tr key={po._id}>
-                                <td><strong>{po.poNumber}</strong></td>
+                                <td className="td-bold">{po.poNumber}</td>
                                 <td>{po.supplierId?.name}</td>
                                 <td>
                                     {po.items?.map((item, i) => (
-                                        <div key={i} style={{ fontSize: 12 }}>
+                                        <div key={i} className="text-xs">
                                             {item.materialId?.name} × {item.quantity} {item.unit}
                                         </div>
                                     ))}
                                 </td>
-                                <td>₹{po.totalAmount?.toLocaleString() || '0'}</td>
+                                <td className="font-semibold">₹{po.totalAmount?.toLocaleString() || '0'}</td>
                                 <td>
-                                    <span className={`status-badge status-${statusConfig[po.status]?.color}`}>
+                                    <span className={`status-badge ${statusConfig[po.status]?.color?.toLowerCase()}`}>
                                         {statusConfig[po.status]?.icon} {po.status}
                                     </span>
                                 </td>
-                                <td>{new Date(po.createdAt).toLocaleDateString()}</td>
-                                <td style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                                    {po.status === 'Draft' && (
-                                        <button className="btn btn-sm btn-primary" onClick={() => updateStatus(po._id, 'Approved')}>Approve</button>
-                                    )}
-                                    {po.status === 'Approved' && (
-                                        <button className="btn btn-sm" onClick={() => updateStatus(po._id, 'Sent')}>Mark Sent</button>
-                                    )}
-                                    {po.status === 'Sent' && (
-                                        <button className="btn btn-sm btn-primary" onClick={() => updateStatus(po._id, 'Received')}>Received</button>
-                                    )}
+                                <td className="text-muted">{new Date(po.createdAt).toLocaleDateString()}</td>
+                                <td>
+                                    <div className="action-buttons">
+                                        {po.status === 'Draft' && (
+                                            <button className="btn btn-sm btn-primary" onClick={() => updateStatus(po._id, 'Approved')}>Approve</button>
+                                        )}
+                                        {po.status === 'Approved' && (
+                                            <button className="btn btn-sm btn-secondary" onClick={() => updateStatus(po._id, 'Sent')}>Mark Sent</button>
+                                        )}
+                                        {po.status === 'Sent' && (
+                                            <button className="btn btn-sm btn-primary" onClick={() => updateStatus(po._id, 'Received')}>Received</button>
+                                        )}
+                                    </div>
                                 </td>
                             </tr>
                         ))}
@@ -103,9 +108,9 @@ export default function PurchaseOrders() {
             </div>
 
             {pos.some(p => p.notes) && (
-                <div className="card" style={{ marginTop: 16 }}>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: 13 }}>
-                        💡 <strong>Tip:</strong> Auto-generated POs are created as "Draft" for materials below minimum threshold, matched to their linked suppliers. Approve → Send → Mark as Received to auto-restock inventory.
+                <div className="card mt-4">
+                    <p className="text-sm text-secondary-color">
+                        <strong>Tip:</strong> Auto-generated POs are created as "Draft" for materials below minimum threshold, matched to their linked suppliers. Approve → Send → Mark as Received to auto-restock inventory.
                     </p>
                 </div>
             )}

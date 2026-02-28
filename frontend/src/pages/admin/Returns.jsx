@@ -101,7 +101,7 @@ export default function Returns() {
             <Modal open={isRecallModalOpen} setOpen={setIsRecallModalOpen}>
                 <ModalBody>
                     <ModalContent className="max-w-[500px]">
-                        <h2 className="text-xl font-bold mb-4 text-white">Initiate Batch Recall</h2>
+                        <h2 className="text-xl font-bold mb-4">Initiate Batch Recall</h2>
                         <form onSubmit={handleRecallSubmit}>
                             <div className="form-group">
                                 <label>Batch ID</label>
@@ -124,7 +124,7 @@ export default function Returns() {
                                 <label>Reason for Recall</label>
                                 <textarea value={recallData.reason} onChange={e => setRecallData({ ...recallData, reason: e.target.value })} required />
                             </div>
-                            <ModalFooter className="gap-2 mt-4 bg-transparent border-t border-white/10">
+                            <ModalFooter className="gap-2 mt-4">
                                 <button type="button" className="btn btn-secondary" onClick={() => setIsRecallModalOpen(false)}>Cancel</button>
                                 <button type="submit" className="btn btn-danger">Initiate Recall</button>
                             </ModalFooter>

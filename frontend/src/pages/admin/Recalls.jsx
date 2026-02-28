@@ -46,42 +46,37 @@ export default function Recalls() {
         } catch { toast.error('Failed to update'); }
     };
 
-    const severityColor = { 'Class I': '#ef4444', 'Class II': '#f59e0b', 'Class III': '#3b82f6' };
-
     if (loading) return <div className="loading-screen"><div className="spinner"></div></div>;
 
     return (
-        <div className="page-container">
+        <div className="page">
             <div className="page-header">
-                <h2>🚨 Drug Recall Management</h2>
+                <div>
+                    <h1>Drug Recall Management</h1>
+                    <p>Track and manage product recalls</p>
+                </div>
                 <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
                     {showForm ? 'Cancel' : '+ Initiate Recall'}
                 </button>
             </div>
 
             {showForm && (
-                <div className="card" style={{ marginBottom: 20 }}>
+                <div className="card form-card section-gap">
                     <h3>Initiate Product Recall</h3>
-                    <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 12 }}>
-                        <div>
-                            <label className="form-label">Batch</label>
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <label>Batch</label>
                             <Select value={form.batchId} onValueChange={(val) => setForm({ ...form, batchId: val })}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select batch..." />
-                                </SelectTrigger>
+                                <SelectTrigger><SelectValue placeholder="Select batch..." /></SelectTrigger>
                                 <SelectContent>
-                                    {batches.map(b => (
-                                        <SelectItem key={b._id} value={b._id}>{b.batchId} — {b.productId?.name}</SelectItem>
-                                    ))}
+                                    {batches.map(b => <SelectItem key={b._id} value={b._id}>{b.batchId} — {b.productId?.name}</SelectItem>)}
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div>
-                            <label className="form-label">Severity</label>
+                        <div className="form-group">
+                            <label>Severity</label>
                             <Select value={form.severity} onValueChange={(val) => setForm({ ...form, severity: val })}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select Severity" />
-                                </SelectTrigger>
+                                <SelectTrigger><SelectValue placeholder="Select Severity" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="Class I">Class I — Most serious, health risk</SelectItem>
                                     <SelectItem value="Class II">Class II — May cause temporary health issues</SelectItem>
@@ -89,21 +84,24 @@ export default function Recalls() {
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div>
-                            <label className="form-label">Reason</label>
-                            <textarea className="form-input" value={form.reason} onChange={e => setForm({ ...form, reason: e.target.value })} required rows={3} placeholder="Describe the reason for recall..." />
+                        <div className="form-group">
+                            <label>Reason</label>
+                            <textarea value={form.reason} onChange={e => setForm({ ...form, reason: e.target.value })} required rows={3} placeholder="Describe the reason for recall..." />
                         </div>
-                        <div>
-                            <label className="form-label">Notes (optional)</label>
-                            <input className="form-input" value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} placeholder="Additional notes..." />
+                        <div className="form-group">
+                            <label>Notes (optional)</label>
+                            <input value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} placeholder="Additional notes..." />
                         </div>
-                        <button type="submit" className="btn btn-primary">⚠️ Initiate Recall</button>
+                        <div className="form-actions">
+                            <button type="submit" className="btn btn-danger">Initiate Recall</button>
+                            <button type="button" className="btn btn-ghost" onClick={() => setShowForm(false)}>Cancel</button>
+                        </div>
                     </form>
                 </div>
             )}
 
-            <div className="table-container">
-                <table>
+            <div className="card">
+                <table className="data-table">
                     <thead>
                         <tr>
                             <th>Recall ID</th><th>Batch</th><th>Product</th><th>Severity</th>
@@ -112,30 +110,30 @@ export default function Recalls() {
                     </thead>
                     <tbody>
                         {recalls.length === 0 ? (
-                            <tr><td colSpan={8} style={{ textAlign: 'center', padding: 40 }}>✅ No recalls initiated</td></tr>
+                            <tr><td colSpan={8} className="empty-table">No recalls initiated</td></tr>
                         ) : recalls.map(r => (
                             <tr key={r._id}>
-                                <td><strong>{r.recallId}</strong></td>
+                                <td className="td-bold">{r.recallId}</td>
                                 <td>{r.batchId?.batchId}</td>
                                 <td>{r.productId?.name}</td>
                                 <td>
-                                    <span style={{ color: severityColor[r.severity], fontWeight: 600 }}>
+                                    <span className={`badge ${r.severity === 'Class I' ? 'badge-danger' : r.severity === 'Class II' ? 'badge-amber' : 'badge-blue'}`}>
                                         {r.severity}
                                     </span>
                                 </td>
                                 <td>
-                                    <span className={`status-badge status-${r.status === 'Initiated' ? 'Pending' : r.status === 'In Progress' ? 'Approved' : 'Delivered'}`}>
-                                        {r.status === 'Initiated' && <FiAlertTriangle style={{ marginRight: 4 }} />}
-                                        {r.status === 'In Progress' && <FiClock style={{ marginRight: 4 }} />}
-                                        {r.status === 'Completed' && <FiCheckCircle style={{ marginRight: 4 }} />}
+                                    <span className={`status-badge ${r.status === 'Initiated' ? 'pending' : r.status === 'In Progress' ? 'approved' : 'delivered'}`}>
+                                        {r.status === 'Initiated' && <FiAlertTriangle />}
+                                        {r.status === 'In Progress' && <FiClock />}
+                                        {r.status === 'Completed' && <FiCheckCircle />}
                                         {r.status}
                                     </span>
                                 </td>
                                 <td>{r.affectedDistributors?.length || 0} distributors</td>
-                                <td>{new Date(r.initiatedAt).toLocaleDateString()}</td>
+                                <td className="text-muted">{new Date(r.initiatedAt).toLocaleDateString()}</td>
                                 <td>
                                     {r.status === 'Initiated' && (
-                                        <button className="btn btn-sm" onClick={() => updateStatus(r._id, 'In Progress')}>Start</button>
+                                        <button className="btn btn-sm btn-secondary" onClick={() => updateStatus(r._id, 'In Progress')}>Start</button>
                                     )}
                                     {r.status === 'In Progress' && (
                                         <button className="btn btn-sm btn-primary" onClick={() => updateStatus(r._id, 'Completed')}>Complete</button>

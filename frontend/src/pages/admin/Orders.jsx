@@ -137,7 +137,7 @@ export default function AdminOrders() {
             <Modal open={isAssignModalOpen} setOpen={setIsAssignModalOpen}>
                 <ModalBody>
                     <ModalContent className="max-w-[400px]">
-                        <h2 className="text-xl font-bold mb-4 text-white">Assign Batch</h2>
+                        <h2 className="text-xl font-bold mb-4">Assign Batch</h2>
                         <Select value={selectedBatchId} onValueChange={setSelectedBatchId}>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select Batch..." />
@@ -148,7 +148,7 @@ export default function AdminOrders() {
                                 ))}
                             </SelectContent>
                         </Select>
-                        <ModalFooter className="gap-2 mt-4 bg-transparent border-t border-white/10">
+                        <ModalFooter className="gap-2 mt-4">
                             <button className="btn btn-secondary" onClick={() => setIsAssignModalOpen(false)}>Cancel</button>
                             <button className="btn btn-primary" onClick={handleAssignBatch}>Assign</button>
                         </ModalFooter>

@@ -92,16 +92,24 @@ function AppRoutes() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Toaster position="top-right" toastOptions={{
-          style: { background: '#1e1e2e', color: '#e2e8f0', border: '1px solid #333' },
-          success: { iconTheme: { primary: '#10b981', secondary: '#1e1e2e' } },
-          error: { iconTheme: { primary: '#ef4444', secondary: '#1e1e2e' } },
-        }} />
-        <AppRoutes />
-      </AuthProvider>
-    </BrowserRouter>
+    <div data-motion="subtle">
+      <BrowserRouter>
+        <AuthProvider>
+          <Toaster position="top-right" toastOptions={{
+            style: {
+              background: 'var(--bg-card)',
+              color: 'var(--text-primary)',
+              border: '1px solid var(--border)',
+              borderRadius: '12px',
+              boxShadow: '0 16px 32px rgba(2, 6, 23, 0.28)'
+            },
+            success: { iconTheme: { primary: 'var(--success)', secondary: 'var(--bg-card)' } },
+            error: { iconTheme: { primary: 'var(--danger)', secondary: 'var(--bg-card)' } },
+          }} />
+          <AppRoutes />
+        </AuthProvider>
+      </BrowserRouter>
+    </div>
   );
 }
 

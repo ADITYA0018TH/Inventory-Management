@@ -8,6 +8,7 @@ import { Modal, ModalBody, ModalContent, ModalFooter } from '@/components/ui/ani
 export default function Suppliers() {
     const [suppliers, setSuppliers] = useState([]);
     const [materials, setMaterials] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formData, setFormData] = useState({ name: '', contactPerson: '', email: '', phone: '', address: '', gstNumber: '', materials: [], rating: 3 });
     const [editingId, setEditingId] = useState(null);
@@ -62,49 +63,140 @@ export default function Suppliers() {
         setIsModalOpen(true);
     };
 
+    const openCreate = () => {
+        setEditingId(null);
+        setFormData({ name: '', contactPerson: '', email: '', phone: '', address: '', gstNumber: '', materials: [], rating: 3 });
+        setIsModalOpen(true);
+    };
+
+    const filteredSuppliers = suppliers.filter((supplier) => {
+        const query = searchQuery.trim().toLowerCase();
+        if (!query) return true;
+        return [
+            supplier.name,
+            supplier.contactPerson,
+            supplier.email,
+            supplier.phone,
+            supplier.address,
+            supplier.gstNumber,
+        ]
+            .filter(Boolean)
+            .some((value) => String(value).toLowerCase().includes(query));
+    });
+
+    const averageRating = suppliers.length
+        ? (suppliers.reduce((total, supplier) => total + (Number(supplier.rating) || 0), 0) / suppliers.length).toFixed(1)
+        : '0.0';
+
+    const totalMaterialConnections = suppliers.reduce((total, supplier) => total + (supplier.materials?.length || 0), 0);
+
     return (
         <div className="page">
             <div className="page-header">
                 <div>
                     <h1>Supplier Management</h1>
-                    <p>Manage raw material suppliers and ratings</p>
+                    <p>Manage supplier profiles, contacts, and material partnerships</p>
                 </div>
-                <Button onClick={() => setIsModalOpen(true)}><FiPlus /> Add Supplier</Button>
+                <Button onClick={openCreate}><FiPlus /> Add Supplier</Button>
             </div>
 
-            <div className="grid-list">
-                {suppliers.map(s => (
-                    <div key={s._id} className="card supplier-card">
-                        <div className="card-header">
-                            <h3>{s.name}</h3>
-                            <div className="rating">
+            <div className="stats-grid suppliers-stats">
+                <div className="stat-card">
+                    <div className="stat-info">
+                        <span className="stat-label">Total Suppliers</span>
+                        <span className="stat-value">{suppliers.length}</span>
+                    </div>
+                </div>
+                <div className="stat-card">
+                    <div className="stat-info">
+                        <span className="stat-label">Avg Rating</span>
+                        <span className="stat-value">{averageRating}</span>
+                    </div>
+                </div>
+                <div className="stat-card">
+                    <div className="stat-info">
+                        <span className="stat-label">Material Links</span>
+                        <span className="stat-value">{totalMaterialConnections}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div className="card suppliers-toolbar">
+                <div className="search-input-group suppliers-search">
+                    <input
+                        type="text"
+                        placeholder="Search by company, contact, email, phone..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </div>
+                <div className="suppliers-toolbar-meta">
+                    Showing {filteredSuppliers.length} of {suppliers.length}
+                </div>
+            </div>
+
+            <div className="grid-list suppliers-grid">
+                {filteredSuppliers.map((s) => (
+                    <div key={s._id} className="card supplier-card supplier-card-redesign">
+                        <div className="supplier-card-top">
+                            <div>
+                                <h3>{s.name}</h3>
+                                <p className="supplier-subtext">GST: {s.gstNumber || 'Not provided'}</p>
+                            </div>
+                            <div className="rating supplier-rating">
                                 {[...Array(5)].map((_, i) => (
-                                    <FiStar key={i} fill={i < s.rating ? "#f59e0b" : "none"} color={i < s.rating ? "#f59e0b" : "#64748b"} />
+                                    <FiStar
+                                        key={i}
+                                        fill={i < s.rating ? 'currentColor' : 'none'}
+                                        color={i < s.rating ? 'var(--warning)' : 'var(--text-muted)'}
+                                        style={{ color: i < s.rating ? 'var(--warning)' : 'var(--text-muted)' }}
+                                    />
                                 ))}
                             </div>
                         </div>
-                        <div className="card-body">
-                            <p><FiUser className="icon" /> {s.contactPerson}</p>
-                            <p><FiMail className="icon" /> {s.email}</p>
-                            <p><FiPhone className="icon" /> {s.phone}</p>
-                            <p><FiMapPin className="icon" /> {s.address}</p>
+
+                        <div className="supplier-meta-list">
+                            <p><FiUser className="icon" /> {s.contactPerson || 'No contact person'}</p>
+                            <p><FiMail className="icon" /> {s.email || 'No email address'}</p>
+                            <p><FiPhone className="icon" /> {s.phone || 'No phone number'}</p>
+                            <p><FiMapPin className="icon" /> {s.address || 'No address provided'}</p>
+                        </div>
+
+                        <div className="supplier-materials">
+                            <h4>Supplied Materials</h4>
                             <div className="tags">
-                                {s.materials.map(m => <span key={m._id} className="badge badge-blue">{m.name}</span>)}
+                                {s.materials?.length
+                                    ? s.materials.map((m) => <span key={m._id} className="badge badge-blue">{m.name}</span>)
+                                    : <span className="badge">No linked materials</span>}
                             </div>
                         </div>
-                        <div className="card-footer form-actions" style={{ justifyContent: 'flex-end', marginTop: 0 }}>
-                            <Button variant="outline" size="icon" onClick={() => openEdit(s)}><FiEdit2 /></Button>
-                            <Button variant="destructive" size="icon" onClick={() => handleDelete(s._id)}><FiTrash2 /></Button>
+
+                        <div className="supplier-actions">
+                            <Button variant="outline" size="icon" onClick={() => openEdit(s)} aria-label="Edit supplier">
+                                <FiEdit2 />
+                            </Button>
+                            <Button variant="destructive" size="icon" onClick={() => handleDelete(s._id)} aria-label="Delete supplier">
+                                <FiTrash2 />
+                            </Button>
                         </div>
                     </div>
                 ))}
             </div>
 
+            {filteredSuppliers.length === 0 && (
+                <div className="card empty-state suppliers-empty-state">
+                    {suppliers.length === 0
+                        ? 'No suppliers added yet. Create your first supplier profile.'
+                        : 'No suppliers match your search query.'}
+                </div>
+            )}
+
             <Modal open={isModalOpen} setOpen={setIsModalOpen}>
                 <ModalBody>
-                    <ModalContent>
-                        <h2 className="text-xl font-bold mb-4 text-white">{editingId ? 'Edit Supplier' : 'Add Supplier'}</h2>
-                        <form onSubmit={handleSubmit}>
+                    <ModalContent className="supplier-modal-content">
+                        <h2 className="text-xl font-bold mb-1">{editingId ? 'Edit Supplier' : 'Add Supplier'}</h2>
+                        <p className="suppliers-modal-subtitle mb-4">Maintain supplier contacts and material sourcing details.</p>
+                        <form onSubmit={handleSubmit} className="supplier-form-layout">
                             <div className="form-group">
                                 <label>Company Name</label>
                                 <input value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} required />
@@ -128,6 +220,10 @@ export default function Suppliers() {
                                 <textarea value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} />
                             </div>
                             <div className="form-group">
+                                <label>GST Number</label>
+                                <input value={formData.gstNumber} onChange={e => setFormData({ ...formData, gstNumber: e.target.value })} />
+                            </div>
+                            <div className="form-group">
                                 <label>Supplies Materials</label>
                                 <select multiple value={formData.materials} onChange={e => setFormData({ ...formData, materials: [...e.target.selectedOptions].map(o => o.value) })} className="multi-select">
                                     {materials.map(m => <option key={m._id} value={m._id}>{m.name}</option>)}
@@ -135,9 +231,9 @@ export default function Suppliers() {
                             </div>
                             <div className="form-group mb-0">
                                 <label>Rating (1-5)</label>
-                                <input type="number" min="1" max="5" value={formData.rating} onChange={e => setFormData({ ...formData, rating: e.target.value })} />
+                                <input type="number" min="1" max="5" value={formData.rating} onChange={e => setFormData({ ...formData, rating: Number(e.target.value) })} />
                             </div>
-                            <ModalFooter className="gap-2 mt-6 bg-transparent border-t border-neutral-200 dark:border-white/10">
+                            <ModalFooter className="gap-2 mt-6 bg-transparent border-t supplier-modal-footer">
                                 <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>Cancel</Button>
                                 <Button type="submit">Save</Button>
                             </ModalFooter>

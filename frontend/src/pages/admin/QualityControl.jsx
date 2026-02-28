@@ -89,7 +89,7 @@ export default function QualityControl() {
             <Modal open={modalOpen} setOpen={setModalOpen}>
                 <ModalBody>
                     <ModalContent className="max-w-[600px]">
-                        <h2 className="text-xl font-bold mb-4 text-white">QC Inspection — {selectedBatch?.batchId}</h2>
+                        <h2 className="text-xl font-bold mb-4">QC Inspection — {selectedBatch?.batchId}</h2>
                         <form onSubmit={handleSubmit}>
                             <div className="form-group">
                                 <label>Inspector Name</label>
@@ -130,7 +130,7 @@ export default function QualityControl() {
                                 <textarea value={qcData.notes} onChange={e => setQcData({ ...qcData, notes: e.target.value })} />
                             </div>
 
-                            <ModalFooter className="gap-2 mt-4 bg-transparent border-t border-white/10">
+                            <ModalFooter className="gap-2 mt-4">
                                 <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>Cancel</button>
                                 <button type="submit" className="btn btn-success">Submit Report</button>
                             </ModalFooter>

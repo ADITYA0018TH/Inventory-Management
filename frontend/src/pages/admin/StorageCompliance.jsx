@@ -37,7 +37,7 @@ export default function StorageCompliance() {
                 humidity: parseFloat(form.humidity)
             });
             if (res.data.isViolation) {
-                toast.error(`⚠️ Violation detected: ${res.data.violationDetails}`);
+                toast.error(`Violation detected: ${res.data.violationDetails}`);
             } else {
                 toast.success('Reading logged — within compliance range');
             }
@@ -52,87 +52,87 @@ export default function StorageCompliance() {
     if (loading) return <div className="loading-screen"><div className="spinner"></div></div>;
 
     return (
-        <div className="page-container">
+        <div className="page">
             <div className="page-header">
-                <h2>🌡️ Storage Compliance</h2>
+                <div>
+                    <h1>Storage Compliance</h1>
+                    <p>Temperature and humidity monitoring</p>
+                </div>
                 <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
                     {showForm ? 'Cancel' : '+ Log Reading'}
                 </button>
             </div>
 
-            <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 20 }}>
-                <div className="card" style={{ textAlign: 'center' }}>
-                    <FiThermometer size={24} style={{ color: '#3b82f6' }} />
-                    <h3 style={{ margin: '8px 0 0' }}>{stats.totalLogs}</h3>
-                    <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Total Readings</p>
+            <div className="grid-auto-fill-280 section-gap">
+                <div className="metric-card">
+                    <FiThermometer size={24} className="text-info" />
+                    <div className="metric-value">{stats.totalLogs}</div>
+                    <p className="metric-label">Total Readings</p>
                 </div>
-                <div className="card" style={{ textAlign: 'center' }}>
-                    <FiAlertTriangle size={24} style={{ color: '#ef4444' }} />
-                    <h3 style={{ margin: '8px 0 0' }}>{stats.totalViolations}</h3>
-                    <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Violations</p>
+                <div className="metric-card">
+                    <FiAlertTriangle size={24} className="text-danger" />
+                    <div className="metric-value text-red">{stats.totalViolations}</div>
+                    <p className="metric-label">Violations</p>
                 </div>
-                <div className="card" style={{ textAlign: 'center' }}>
-                    <FiDroplet size={24} style={{ color: '#10b981' }} />
-                    <h3 style={{ margin: '8px 0 0' }}>{stats.complianceRate}%</h3>
-                    <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Compliance Rate</p>
+                <div className="metric-card">
+                    <FiDroplet size={24} className="text-success" />
+                    <div className="metric-value text-green">{stats.complianceRate}%</div>
+                    <p className="metric-label">Compliance Rate</p>
                 </div>
             </div>
 
             {showForm && (
-                <div className="card" style={{ marginBottom: 20 }}>
+                <div className="card form-card section-gap">
                     <h3>Log Storage Reading</h3>
-                    <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 12 }}>
-                        <div>
-                            <label className="form-label">Batch</label>
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <label>Batch</label>
                             <Select value={form.batchId} onValueChange={(val) => setForm({ ...form, batchId: val })}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select batch..." />
-                                </SelectTrigger>
+                                <SelectTrigger><SelectValue placeholder="Select batch..." /></SelectTrigger>
                                 <SelectContent>
-                                    {batches.map(b => (
-                                        <SelectItem key={b._id} value={b._id}>{b.batchId} — {b.productId?.name}</SelectItem>
-                                    ))}
+                                    {batches.map(b => <SelectItem key={b._id} value={b._id}>{b.batchId} — {b.productId?.name}</SelectItem>)}
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                            <div>
-                                <label className="form-label">Temperature (°C)</label>
-                                <input type="number" step="0.1" className="form-input" value={form.temperature} onChange={e => setForm({ ...form, temperature: e.target.value })} required placeholder="e.g. 22.5" />
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>Temperature (°C)</label>
+                                <input type="number" step="0.1" value={form.temperature} onChange={e => setForm({ ...form, temperature: e.target.value })} required placeholder="e.g. 22.5" />
                             </div>
-                            <div>
-                                <label className="form-label">Humidity (%)</label>
-                                <input type="number" step="0.1" className="form-input" value={form.humidity} onChange={e => setForm({ ...form, humidity: e.target.value })} required placeholder="e.g. 45" />
+                            <div className="form-group">
+                                <label>Humidity (%)</label>
+                                <input type="number" step="0.1" value={form.humidity} onChange={e => setForm({ ...form, humidity: e.target.value })} required placeholder="e.g. 45" />
                             </div>
                         </div>
-                        <button type="submit" className="btn btn-primary">Log Reading</button>
+                        <div className="form-actions">
+                            <button type="submit" className="btn btn-primary">Log Reading</button>
+                            <button type="button" className="btn btn-ghost" onClick={() => setShowForm(false)}>Cancel</button>
+                        </div>
                     </form>
                 </div>
             )}
 
             <div className="card">
-                <h3>⚠️ Violation History</h3>
-                <div className="table-container">
-                    <table>
-                        <thead>
-                            <tr><th>Date</th><th>Batch</th><th>Product</th><th>Temp</th><th>Humidity</th><th>Details</th></tr>
-                        </thead>
-                        <tbody>
-                            {violations.length === 0 ? (
-                                <tr><td colSpan={6} style={{ textAlign: 'center', padding: 40 }}>✅ No violations recorded</td></tr>
-                            ) : violations.map(v => (
-                                <tr key={v._id}>
-                                    <td>{new Date(v.recordedAt).toLocaleString()}</td>
-                                    <td><strong>{v.batchId?.batchId}</strong></td>
-                                    <td>{v.batchId?.productId?.name}</td>
-                                    <td style={{ color: '#ef4444', fontWeight: 600 }}>{v.temperature}°C</td>
-                                    <td style={{ color: '#ef4444', fontWeight: 600 }}>{v.humidity}%</td>
-                                    <td style={{ fontSize: 12 }}>{v.violationDetails}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                <h3>Violation History</h3>
+                <table className="data-table">
+                    <thead>
+                        <tr><th>Date</th><th>Batch</th><th>Product</th><th>Temp</th><th>Humidity</th><th>Details</th></tr>
+                    </thead>
+                    <tbody>
+                        {violations.length === 0 ? (
+                            <tr><td colSpan={6} className="empty-table">No violations recorded</td></tr>
+                        ) : violations.map(v => (
+                            <tr key={v._id}>
+                                <td className="text-muted">{new Date(v.recordedAt).toLocaleString()}</td>
+                                <td className="td-bold">{v.batchId?.batchId}</td>
+                                <td>{v.batchId?.productId?.name}</td>
+                                <td className="text-danger font-semibold">{v.temperature}°C</td>
+                                <td className="text-danger font-semibold">{v.humidity}%</td>
+                                <td className="text-xs">{v.violationDetails}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );

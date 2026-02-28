@@ -75,7 +75,6 @@ export default function Sidebar({ isOpen, onClose }) {
                         <img src="/src/assets/logo.png" alt="PharmaLink" className="logo-icon" />
                         <h1>PharmaLink</h1>
                     </div>
-                    <button className="mobile-close" onClick={onClose}>&times;</button>
                 </div>
 
                 <nav className="sidebar-nav">

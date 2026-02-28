@@ -38,82 +38,80 @@ export default function Forecasting() {
 
     const chartData = prediction ? [...prediction.historical, ...prediction.forecast] : [];
 
+    const tooltipStyle = {
+        contentStyle: { background: 'var(--clay-surface)', border: '1px solid var(--border)', borderRadius: 8 },
+        labelStyle: { color: 'var(--text-primary)' },
+        itemStyle: { color: 'var(--text-secondary)' },
+    };
+
     return (
-        <div className="page-container">
+        <div className="page">
             <div className="page-header">
-                <h2>📈 Demand Forecasting</h2>
-                <p style={{ color: 'var(--text-secondary)' }}>Simple Moving Average predictions based on order history</p>
+                <div>
+                    <h1>Demand Forecasting</h1>
+                    <p>Simple Moving Average predictions based on order history</p>
+                </div>
             </div>
 
-            {/* Summary Cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 20 }}>
+            <div className="grid-auto-fill-280 section-gap">
                 {allPredictions.slice(0, 4).map(p => (
-                    <div key={p.product._id} className="card" style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => loadPrediction(p.product._id)}>
-                        <FiTrendingUp size={20} style={{ color: p.trend === 'Active' ? '#10b981' : '#666' }} />
-                        <h4 style={{ margin: '8px 0 4px' }}>{p.product.name}</h4>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: 12, margin: 0 }}>
+                    <div key={p.product._id} className="metric-card clickable" onClick={() => loadPrediction(p.product._id)}>
+                        <FiTrendingUp size={20} className={p.trend === 'Active' ? 'text-success' : 'text-muted'} />
+                        <h4 className="mt-2 mb-0">{p.product.name}</h4>
+                        <p className="text-xs text-secondary-color">
                             Avg: {p.avgMonthlyDemand}/mo · Predicted: <strong>{p.predictedNextMonth}</strong>
                         </p>
-                        <span className={`status-badge status-${p.trend === 'Active' ? 'Delivered' : 'Pending'}`} style={{ marginTop: 8 }}>{p.trend}</span>
+                        <span className={`status-badge ${p.trend === 'Active' ? 'delivered' : 'pending'} mt-2`}>{p.trend}</span>
                     </div>
                 ))}
             </div>
 
-            {/* Product Selector */}
-            <div className="card" style={{ marginBottom: 20 }}>
+            <div className="card section-gap">
                 <h3>Detailed Prediction</h3>
                 <Select value={selectedProduct} onValueChange={loadPrediction}>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select a product to view detailed forecast..." />
-                    </SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder="Select a product to view detailed forecast..." /></SelectTrigger>
                     <SelectContent>
-                        {products.map(p => (
-                            <SelectItem key={p._id} value={p._id}>{p.name} ({p.type})</SelectItem>
-                        ))}
+                        {products.map(p => <SelectItem key={p._id} value={p._id}>{p.name} ({p.type})</SelectItem>)}
                     </SelectContent>
                 </Select>
             </div>
 
-            {/* Chart */}
             {prediction && (
                 <div className="card">
-                    <h3>📊 {prediction.product?.name} — Actual vs Predicted (SMA-{prediction.window})</h3>
+                    <h3>{prediction.product?.name} — Actual vs Predicted (SMA-{prediction.window})</h3>
                     <ResponsiveContainer width="100%" height={350}>
                         <LineChart data={chartData}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                            <XAxis dataKey="month" stroke="var(--text-secondary)" fontSize={12} />
-                            <YAxis stroke="var(--text-secondary)" fontSize={12} />
-                            <Tooltip contentStyle={{ background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }} />
+                            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                            <XAxis dataKey="month" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
+                            <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
+                            <Tooltip {...tooltipStyle} />
                             <Legend />
-                            <Line type="monotone" dataKey="actual" stroke="#3b82f6" strokeWidth={2} dot={{ r: 4 }} name="Actual Demand" />
-                            <Line type="monotone" dataKey="predicted" stroke="#f59e0b" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 4 }} name="Predicted (SMA)" />
+                            <Line type="monotone" dataKey="actual" stroke="var(--info)" strokeWidth={2} dot={{ r: 4 }} name="Actual Demand" />
+                            <Line type="monotone" dataKey="predicted" stroke="var(--warning)" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 4 }} name="Predicted (SMA)" />
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
             )}
 
-            {/* All Products Table */}
-            <div className="card" style={{ marginTop: 20 }}>
+            <div className="card mt-5">
                 <h3>All Products Forecast Summary</h3>
-                <div className="table-container">
-                    <table>
-                        <thead>
-                            <tr><th>Product</th><th>Type</th><th>Total Ordered</th><th>Avg/Month</th><th>Next Month Prediction</th><th>Trend</th></tr>
-                        </thead>
-                        <tbody>
-                            {allPredictions.map(p => (
-                                <tr key={p.product._id} style={{ cursor: 'pointer' }} onClick={() => loadPrediction(p.product._id)}>
-                                    <td><strong>{p.product.name}</strong></td>
-                                    <td>{p.product.type}</td>
-                                    <td>{p.totalOrdered}</td>
-                                    <td>{p.avgMonthlyDemand}</td>
-                                    <td style={{ fontWeight: 600, color: '#3b82f6' }}>{p.predictedNextMonth}</td>
-                                    <td><span className={`status-badge status-${p.trend === 'Active' ? 'Delivered' : 'Pending'}`}>{p.trend}</span></td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                <table className="data-table">
+                    <thead>
+                        <tr><th>Product</th><th>Type</th><th>Total Ordered</th><th>Avg/Month</th><th>Next Month Prediction</th><th>Trend</th></tr>
+                    </thead>
+                    <tbody>
+                        {allPredictions.map(p => (
+                            <tr key={p.product._id} className="clickable" onClick={() => loadPrediction(p.product._id)}>
+                                <td className="td-bold">{p.product.name}</td>
+                                <td>{p.product.type}</td>
+                                <td>{p.totalOrdered}</td>
+                                <td>{p.avgMonthlyDemand}</td>
+                                <td className="td-bold text-info">{p.predictedNextMonth}</td>
+                                <td><span className={`status-badge ${p.trend === 'Active' ? 'delivered' : 'pending'}`}>{p.trend}</span></td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );
