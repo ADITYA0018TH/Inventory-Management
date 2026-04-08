@@ -15,25 +15,34 @@ const tooltipStyle = {
     fontSize: 13,
 };
 
+const DATE_FILTERS = [
+    { label: 'Last 30 days', days: 30 },
+    { label: 'Last 90 days', days: 90 },
+    { label: 'Last 365 days', days: 365 },
+    { label: 'All time', days: 0 },
+];
+
 export default function Dashboard() {
     const [stats, setStats] = useState(null);
     const [alerts, setAlerts] = useState([]);
     const [expiring, setExpiring] = useState([]);
     const [products, setProducts] = useState([]);
     const [batches, setBatches] = useState([]);
+    const [dateFilter, setDateFilter] = useState(30);
 
     useEffect(() => {
         loadDashboard();
-    }, []);
+    }, [dateFilter]);
 
     const loadDashboard = async () => {
         try {
+            const params = dateFilter > 0 ? `?days=${dateFilter}` : '';
             const [statsRes, alertsRes, expiringRes, productsRes, batchesRes] = await Promise.all([
-                API.get('/orders/stats'),
+                API.get(`/orders/stats${params}`),
                 API.get('/raw-materials/alerts'),
                 API.get('/batches/expiring'),
                 API.get('/products'),
-                API.get('/batches')
+                API.get(`/batches${params}`)
             ]);
             setStats(statsRes.data);
             setAlerts(alertsRes.data);
@@ -66,6 +75,17 @@ export default function Dashboard() {
                 <div>
                     <h1>Dashboard</h1>
                     <p>Overview of your manufacturing operations</p>
+                </div>
+                <div className="date-filter-group">
+                    {DATE_FILTERS.map(f => (
+                        <button
+                            key={f.days}
+                            className={`btn btn-sm ${dateFilter === f.days ? 'btn-primary' : 'btn-ghost'}`}
+                            onClick={() => setDateFilter(f.days)}
+                        >
+                            {f.label}
+                        </button>
+                    ))}
                 </div>
             </div>
 

@@ -57,7 +57,7 @@ export default function Login() {
             <div className="auth-container">
                 <div className="auth-left">
                     <div className="auth-branding">
-                        <img src="/src/assets/logo.png" alt="PharmaLink" className="auth-logo" />
+                        <img src="/logo.svg" alt="PharmaLink" className="auth-logo" />
                         <h1>PharmaLink</h1>
                         <p>Supply Chain & Inventory Management System</p>
                     </div>

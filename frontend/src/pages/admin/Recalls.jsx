@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
 import toast from 'react-hot-toast';
-import { AlertTriangle as FiAlertTriangle, CheckCircle as FiCheckCircle, Clock as FiClock } from 'lucide-react';
+import { AlertTriangle as FiAlertTriangle, CheckCircle as FiCheckCircle, Clock as FiClock, BarChart2 as FiBarChart2 } from 'lucide-react';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 export default function Recalls() {
@@ -9,6 +9,8 @@ export default function Recalls() {
     const [batches, setBatches] = useState([]);
     const [showForm, setShowForm] = useState(false);
     const [form, setForm] = useState({ batchId: '', reason: '', severity: 'Class II', notes: '' });
+    const [impact, setImpact] = useState(null);
+    const [impactRecallId, setImpactRecallId] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => { loadData(); }, []);
@@ -44,6 +46,15 @@ export default function Recalls() {
             toast.success(`Recall ${status.toLowerCase()}`);
             loadData();
         } catch { toast.error('Failed to update'); }
+    };
+
+    const loadImpact = async (id) => {
+        if (impactRecallId === id) { setImpact(null); setImpactRecallId(null); return; }
+        try {
+            const res = await API.get(`/recalls/${id}/impact`);
+            setImpact(res.data);
+            setImpactRecallId(id);
+        } catch { toast.error('Failed to load impact analysis'); }
     };
 
     if (loading) return <div className="loading-screen"><div className="spinner"></div></div>;
@@ -104,7 +115,7 @@ export default function Recalls() {
                 <table className="data-table">
                     <thead>
                         <tr>
-                            <th>Recall ID</th><th>Batch</th><th>Product</th><th>Severity</th>
+                        <th>Recall ID</th><th>Batch</th><th>Product</th><th>Severity</th>
                             <th>Status</th><th>Affected</th><th>Date</th><th>Actions</th>
                         </tr>
                     </thead>
@@ -138,12 +149,61 @@ export default function Recalls() {
                                     {r.status === 'In Progress' && (
                                         <button className="btn btn-sm btn-primary" onClick={() => updateStatus(r._id, 'Completed')}>Complete</button>
                                     )}
+                                    <button className="btn btn-sm btn-ghost ml-1" onClick={() => loadImpact(r._id)} title="Impact Analysis">
+                                        <FiBarChart2 />
+                                    </button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
+        </div>
+    );
+}
+
+            {/* Impact Analysis Panel */}
+            {impact && (
+                <div className="card mt-4">
+                    <h3><FiBarChart2 className="inline mr-2" />Recall Impact Analysis — {impact.recallId}</h3>
+                    <div className="grid-auto-fill-280 mt-4">
+                        <div className="metric-card">
+                            <div className="metric-value">{impact.totalProduced}</div>
+                            <p className="metric-label">Total Units Produced</p>
+                        </div>
+                        <div className="metric-card">
+                            <div className="metric-value text-red">{impact.totalUnitsAffected}</div>
+                            <p className="metric-label">Units Affected</p>
+                        </div>
+                        <div className="metric-card">
+                            <div className="metric-value text-amber">{impact.percentageAffected}%</div>
+                            <p className="metric-label">% of Batch Distributed</p>
+                        </div>
+                        <div className="metric-card">
+                            <div className="metric-value text-danger">₹{impact.estimatedFinancialImpact?.toLocaleString()}</div>
+                            <p className="metric-label">Estimated Financial Impact</p>
+                        </div>
+                        <div className="metric-card">
+                            <div className="metric-value">{impact.affectedDistributorsCount}</div>
+                            <p className="metric-label">Distributors Affected</p>
+                        </div>
+                    </div>
+                    {impact.affectedDistributors?.length > 0 && (
+                        <table className="data-table mt-4">
+                            <thead><tr><th>Distributor</th><th>Company</th><th>Email</th></tr></thead>
+                            <tbody>
+                                {impact.affectedDistributors.map(d => (
+                                    <tr key={d._id}>
+                                        <td>{d.name}</td>
+                                        <td>{d.companyName || '—'}</td>
+                                        <td>{d.email}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

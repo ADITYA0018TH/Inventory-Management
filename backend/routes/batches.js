@@ -227,4 +227,55 @@ router.get('/:id/verify-chain', auth, async (req, res) => {
     }
 });
 
+// GET batch cost breakdown
+router.get('/:id/cost', auth, adminOnly, async (req, res) => {
+    try {
+        const batch = await Batch.findById(req.params.id)
+            .populate({ path: 'productId', populate: { path: 'formula.materialId materialCosts.materialId' } });
+        if (!batch) return res.status(404).json({ message: 'Batch not found' });
+
+        const product = batch.productId;
+        const costBreakdown = [];
+        let totalCost = 0;
+
+        for (const ingredient of product.formula) {
+            const totalUsed = ingredient.quantityRequired * batch.quantityProduced;
+            // Find cost from materialCosts array
+            const costEntry = product.materialCosts?.find(
+                mc => mc.materialId?._id?.toString() === ingredient.materialId?._id?.toString()
+            );
+            const costPerUnit = costEntry?.costPerUnit || 0;
+            const lineCost = totalUsed * costPerUnit;
+            totalCost += lineCost;
+            costBreakdown.push({
+                material: ingredient.materialId?.name,
+                unit: ingredient.materialId?.unit,
+                quantityPerUnit: ingredient.quantityRequired,
+                totalUsed,
+                costPerUnit,
+                lineCost
+            });
+        }
+
+        const costPerProducedUnit = batch.quantityProduced > 0 ? (totalCost / batch.quantityProduced) : 0;
+        const sellingPrice = product.pricePerUnit || 0;
+        const profitMargin = sellingPrice > 0
+            ? (((sellingPrice - costPerProducedUnit) / sellingPrice) * 100).toFixed(1)
+            : null;
+
+        res.json({
+            batchId: batch.batchId,
+            product: product.name,
+            quantityProduced: batch.quantityProduced,
+            totalCost: parseFloat(totalCost.toFixed(2)),
+            costPerProducedUnit: parseFloat(costPerProducedUnit.toFixed(2)),
+            sellingPrice,
+            profitMargin,
+            breakdown: costBreakdown
+        });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error', error: err.message });
+    }
+});
+
 module.exports = router;

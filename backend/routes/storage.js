@@ -82,3 +82,56 @@ router.get('/stats', auth, adminOnly, async (req, res) => {
 });
 
 module.exports = router;
+
+// POST bulk import storage readings from CSV data (array of {batchId, temperature, humidity, recordedAt})
+router.post('/bulk-import', auth, adminOnly, async (req, res) => {
+    try {
+        const { readings } = req.body; // array of { batchId, temperature, humidity, recordedAt? }
+        if (!Array.isArray(readings) || readings.length === 0) {
+            return res.status(400).json({ message: 'No readings provided' });
+        }
+
+        const results = { saved: 0, violations: 0, errors: [] };
+
+        for (const r of readings) {
+            try {
+                const batch = await Batch.findById(r.batchId).populate('productId');
+                if (!batch) { results.errors.push(`Batch ${r.batchId} not found`); continue; }
+
+                const sc = batch.productId.storageConditions || {};
+                let isViolation = false;
+                let violationDetails = '';
+
+                if (r.temperature < (sc.minTemp || 15) || r.temperature > (sc.maxTemp || 25)) {
+                    isViolation = true;
+                    violationDetails += `Temp ${r.temperature}°C out of range. `;
+                }
+                if (r.humidity < (sc.minHumidity || 30) || r.humidity > (sc.maxHumidity || 60)) {
+                    isViolation = true;
+                    violationDetails += `Humidity ${r.humidity}% out of range. `;
+                }
+
+                const log = new StorageLog({
+                    batchId: r.batchId,
+                    temperature: r.temperature,
+                    humidity: r.humidity,
+                    recordedAt: r.recordedAt ? new Date(r.recordedAt) : new Date(),
+                    isViolation,
+                    violationDetails: violationDetails.trim(),
+                    recordedBy: req.user.id
+                });
+                await log.save();
+                results.saved++;
+                if (isViolation) results.violations++;
+            } catch (e) {
+                results.errors.push(e.message);
+            }
+        }
+
+        res.json({ message: `Imported ${results.saved} readings`, ...results });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error', error: err.message });
+    }
+});
+
+module.exports = router;

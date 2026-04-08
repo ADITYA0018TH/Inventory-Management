@@ -114,3 +114,49 @@ router.get('/:id/affected', auth, async (req, res) => {
 });
 
 module.exports = router;
+
+// GET recall impact analysis
+router.get('/:id/impact', auth, async (req, res) => {
+    try {
+        const recall = await Recall.findById(req.params.id)
+            .populate({ path: 'batchId', populate: { path: 'productId', select: 'name pricePerUnit' } })
+            .populate('affectedDistributors', 'name email companyName');
+        if (!recall) return res.status(404).json({ message: 'Recall not found' });
+
+        const batch = recall.batchId;
+        const product = batch?.productId;
+
+        // Find all orders with this batch
+        const orders = await Order.find({ 'items.batchId': batch?.batchId });
+        let totalUnitsAffected = 0;
+        orders.forEach(o => {
+            o.items.forEach(item => {
+                if (item.batchId === batch?.batchId) totalUnitsAffected += item.quantity;
+            });
+        });
+
+        // Total batch size
+        const totalProduced = batch?.quantityProduced || 0;
+        const percentageAffected = totalProduced > 0
+            ? ((totalUnitsAffected / totalProduced) * 100).toFixed(1)
+            : 0;
+
+        const estimatedFinancialImpact = totalUnitsAffected * (product?.pricePerUnit || 0);
+
+        res.json({
+            recallId: recall.recallId,
+            product: product?.name,
+            severity: recall.severity,
+            totalProduced,
+            totalUnitsAffected,
+            percentageAffected,
+            estimatedFinancialImpact,
+            affectedDistributorsCount: recall.affectedDistributors?.length || 0,
+            affectedDistributors: recall.affectedDistributors
+        });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error', error: err.message });
+    }
+});
+
+module.exports = router;

@@ -43,29 +43,41 @@ router.get('/predict/:productId', auth, adminOnly, async (req, res) => {
         for (let i = 0; i < monthlyData.length; i++) {
             if (i < window) {
                 monthlyData[i].predicted = null;
+                monthlyData[i].ewma = null;
             } else {
                 const avg = (monthlyData[i - 1].actual + monthlyData[i - 2].actual + monthlyData[i - 3].actual) / window;
                 monthlyData[i].predicted = Math.round(avg);
             }
         }
 
-        // Predict next 3 months
+        // EWMA (alpha=0.3 — weights recent data more)
+        const alpha = 0.3;
+        let ewmaVal = monthlyData[0].actual;
+        for (let i = 0; i < monthlyData.length; i++) {
+            ewmaVal = alpha * monthlyData[i].actual + (1 - alpha) * ewmaVal;
+            monthlyData[i].ewma = Math.round(ewmaVal);
+        }
+
+        // Predict next 3 months (both SMA and EWMA)
         const forecast = [];
         const lastActuals = monthlyData.slice(-window).map(d => d.actual);
+        let forecastEwma = ewmaVal;
         for (let i = 1; i <= 3; i++) {
             const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
-            const avg = Math.round(lastActuals.reduce((a, b) => a + b, 0) / window);
+            const smaAvg = Math.round(lastActuals.reduce((a, b) => a + b, 0) / window);
+            forecastEwma = Math.round(alpha * smaAvg + (1 - alpha) * forecastEwma);
             forecast.push({
                 month: d.toLocaleString('default', { month: 'short', year: '2-digit' }),
-                predicted: avg,
+                predicted: smaAvg,
+                ewma: forecastEwma,
                 actual: null
             });
             lastActuals.shift();
-            lastActuals.push(avg);
+            lastActuals.push(smaAvg);
         }
 
         const product = await Product.findById(productId, 'name type');
-        res.json({ product, historical: monthlyData, forecast, window });
+        res.json({ product, historical: monthlyData, forecast, window, alpha: 0.3 });
     } catch (err) {
         res.status(500).json({ message: 'Server error', error: err.message });
     }

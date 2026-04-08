@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import API from '../../api';
-import { AreaChart, Area, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import API, { getBaseURL } from '../../api';
+import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Download as FiDownload } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -29,8 +29,8 @@ export default function Reports() {
     };
 
     const downloadReport = (type) => {
-        // Implementation for downloading specific chart data as CSV
-        window.open(`http://localhost:5001/api/export/${type}`, '_blank');
+        const token = localStorage.getItem('token');
+        window.open(`${getBaseURL()}/api/export/${type}?token=${token}`, '_blank');
     };
 
     const tooltipStyle = {

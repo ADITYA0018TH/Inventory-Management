@@ -31,6 +31,7 @@ import DistributorOrders from './pages/distributor/Orders';
 import VerifyBatch from './pages/distributor/VerifyBatch';
 import DistributorReturns from './pages/distributor/Returns';
 import Scanner from './pages/distributor/Scanner';
+import DistributorAnalytics from './pages/distributor/Analytics';
 
 import Messages from './pages/Messages';
 import Profile from './pages/Profile';
@@ -74,6 +75,7 @@ function AppRoutes() {
       <Route path="/distributor" element={<ProtectedRoute role="distributor"><Layout /></ProtectedRoute>}>
         <Route path="catalog" element={<Catalog />} />
         <Route path="orders" element={<DistributorOrders />} />
+        <Route path="analytics" element={<DistributorAnalytics />} />
         <Route path="returns" element={<DistributorReturns />} />
         <Route path="verify" element={<VerifyBatch />} />
         <Route path="scanner" element={<Scanner />} />

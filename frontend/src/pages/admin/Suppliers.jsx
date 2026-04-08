@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
-import { Plus as FiPlus, Trash2 as FiTrash2, Edit2 as FiEdit2, Phone as FiPhone, Mail as FiMail, MapPin as FiMapPin, Star as FiStar, User as FiUser } from 'lucide-react';
+import { Plus as FiPlus, Trash2 as FiTrash2, Edit2 as FiEdit2, Phone as FiPhone, Mail as FiMail, MapPin as FiMapPin, Star as FiStar, User as FiUser, TrendingUp as FiTrendingUp } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 import { Modal, ModalBody, ModalContent, ModalFooter } from '@/components/ui/animated-modal';
@@ -12,6 +12,8 @@ export default function Suppliers() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formData, setFormData] = useState({ name: '', contactPerson: '', email: '', phone: '', address: '', gstNumber: '', materials: [], rating: 3 });
     const [editingId, setEditingId] = useState(null);
+    const [performance, setPerformance] = useState(null);
+    const [perfSupplierId, setPerfSupplierId] = useState(null);
 
     useEffect(() => {
         loadData();
@@ -67,6 +69,15 @@ export default function Suppliers() {
         setEditingId(null);
         setFormData({ name: '', contactPerson: '', email: '', phone: '', address: '', gstNumber: '', materials: [], rating: 3 });
         setIsModalOpen(true);
+    };
+
+    const loadPerformance = async (supplierId) => {
+        if (perfSupplierId === supplierId) { setPerformance(null); setPerfSupplierId(null); return; }
+        try {
+            const res = await API.get(`/suppliers/${supplierId}/performance`);
+            setPerformance(res.data);
+            setPerfSupplierId(supplierId);
+        } catch { toast.error('Failed to load performance data'); }
     };
 
     const filteredSuppliers = suppliers.filter((supplier) => {
@@ -172,6 +183,9 @@ export default function Suppliers() {
                         </div>
 
                         <div className="supplier-actions">
+                            <Button variant="outline" size="icon" onClick={() => loadPerformance(s._id)} title="View Performance">
+                                <FiTrendingUp />
+                            </Button>
                             <Button variant="outline" size="icon" onClick={() => openEdit(s)} aria-label="Edit supplier">
                                 <FiEdit2 />
                             </Button>
@@ -179,6 +193,17 @@ export default function Suppliers() {
                                 <FiTrash2 />
                             </Button>
                         </div>
+
+                        {/* Auto-rating badge */}
+                        {s.autoRating !== null && s.autoRating !== undefined && (
+                            <div className="mt-2 text-xs text-secondary-color">
+                                Auto-rating from PO history:
+                                <span className="ml-1 font-semibold text-warning">{s.autoRating}/5</span>
+                                {s.autoRating !== s.rating && (
+                                    <span className="ml-1 text-muted">(manual: {s.rating}/5)</span>
+                                )}
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
@@ -188,6 +213,50 @@ export default function Suppliers() {
                     {suppliers.length === 0
                         ? 'No suppliers added yet. Create your first supplier profile.'
                         : 'No suppliers match your search query.'}
+                </div>
+            )}
+
+            {/* Performance Panel */}
+            {performance && (
+                <div className="card mt-4">
+                    <h3><FiTrendingUp className="inline mr-2" />Supplier Performance — Auto-calculated from Purchase Orders</h3>
+                    <div className="grid-auto-fill-280 mt-4">
+                        <div className="metric-card">
+                            <div className="metric-value">{performance.total}</div>
+                            <p className="metric-label">Total POs</p>
+                        </div>
+                        <div className="metric-card">
+                            <div className="metric-value text-success">{performance.received}</div>
+                            <p className="metric-label">Received</p>
+                        </div>
+                        <div className="metric-card">
+                            <div className="metric-value text-warning">{performance.pending}</div>
+                            <p className="metric-label">Pending</p>
+                        </div>
+                        <div className="metric-card">
+                            <div className="metric-value text-info">{performance.deliveryRate}%</div>
+                            <p className="metric-label">Delivery Rate</p>
+                        </div>
+                        <div className="metric-card">
+                            <div className="metric-value">₹{performance.totalValue?.toLocaleString()}</div>
+                            <p className="metric-label">Total PO Value</p>
+                        </div>
+                    </div>
+                    {performance.recentOrders?.length > 0 && (
+                        <table className="data-table mt-4">
+                            <thead><tr><th>PO Number</th><th>Status</th><th>Amount</th><th>Date</th></tr></thead>
+                            <tbody>
+                                {performance.recentOrders.map(po => (
+                                    <tr key={po._id}>
+                                        <td className="td-bold">{po.poNumber}</td>
+                                        <td><span className={`status-badge ${po.status === 'Received' ? 'delivered' : po.status === 'Sent' ? 'approved' : 'pending'}`}>{po.status}</span></td>
+                                        <td>₹{po.totalAmount?.toLocaleString()}</td>
+                                        <td className="text-muted">{new Date(po.createdAt).toLocaleDateString()}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
                 </div>
             )}
 

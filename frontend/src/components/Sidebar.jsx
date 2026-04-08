@@ -57,6 +57,7 @@ export default function Sidebar({ isOpen, onClose }) {
             group: 'Menu', items: [
                 { to: '/distributor/catalog', label: 'Product Catalog', icon: <FiPackage /> },
                 { to: '/distributor/orders', label: 'My Orders', icon: <FiShoppingCart /> },
+                { to: '/distributor/analytics', label: 'My Analytics', icon: <FiTrendingUp /> },
                 { to: '/distributor/returns', label: 'My Returns', icon: <FiAlertTriangle /> },
                 { to: '/distributor/verify', label: 'Verify Batch', icon: <FiSearch /> },
                 { to: '/distributor/scanner', label: 'QR Scanner', icon: <FiCamera /> },
@@ -72,7 +73,7 @@ export default function Sidebar({ isOpen, onClose }) {
             <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
                 <div className="sidebar-header">
                     <div className="sidebar-logo">
-                        <img src="/src/assets/logo.png" alt="PharmaLink" className="logo-icon" />
+                        <img src="/logo.svg" alt="PharmaLink" className="logo-icon" />
                         <h1>PharmaLink</h1>
                     </div>
                 </div>

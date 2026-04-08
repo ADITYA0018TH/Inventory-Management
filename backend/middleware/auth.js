@@ -22,4 +22,20 @@ const adminOnly = (req, res, next) => {
     next();
 };
 
-module.exports = { auth, adminOnly };
+// Admin or quality inspector
+const qualityAccess = (req, res, next) => {
+    if (!['admin', 'quality_inspector'].includes(req.user.role)) {
+        return res.status(403).json({ message: 'Access denied.' });
+    }
+    next();
+};
+
+// Admin or warehouse manager
+const warehouseAccess = (req, res, next) => {
+    if (!['admin', 'warehouse_manager'].includes(req.user.role)) {
+        return res.status(403).json({ message: 'Access denied.' });
+    }
+    next();
+};
+
+module.exports = { auth, adminOnly, qualityAccess, warehouseAccess };

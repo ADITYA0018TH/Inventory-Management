@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import API from '../../api';
+import API, { getBaseURL } from '../../api';
 import toast from 'react-hot-toast';
 import { FileText, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -29,7 +29,7 @@ export default function DistributorOrders() {
 
     const downloadPDF = (orderId) => {
         const token = localStorage.getItem('token');
-        window.open(`http://localhost:5001/api/invoice/${orderId}/pdf?token=${token}`, '_blank');
+        window.open(`${getBaseURL()}/api/invoice/${orderId}/pdf?token=${token}`, '_blank');
     };
 
     return (

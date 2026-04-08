@@ -102,6 +102,42 @@ app.get('/', (req, res) => {
     res.send('PharmaLink API is running');
 });
 
+// Auto-save compliance snapshot daily
+const ComplianceSnapshot = require('./models/ComplianceSnapshot');
+const Batch = require('./models/Batch');
+const Order = require('./models/Order');
+const QualityCheck = require('./models/QualityCheck');
+const StorageLog = require('./models/StorageLog');
+const Recall = require('./models/Recall');
+
+async function saveComplianceSnapshot() {
+    try {
+        const totalBatches = await Batch.countDocuments();
+        const testedBatches = await QualityCheck.distinct('batchId');
+        const testingRate = totalBatches > 0 ? (testedBatches.length / totalBatches * 100) : 0;
+        const now = new Date();
+        const releasedBatches = await Batch.countDocuments({ status: 'Released' });
+        const expiredBatches = await Batch.countDocuments({ status: 'Released', expDate: { $lt: now } });
+        const expiryScore = releasedBatches > 0 ? ((releasedBatches - expiredBatches) / releasedBatches * 100) : 100;
+        const totalLogs = await StorageLog.countDocuments();
+        const violations = await StorageLog.countDocuments({ isViolation: true });
+        const storageScore = totalLogs > 0 ? ((totalLogs - violations) / totalLogs * 100) : 100;
+        const totalRecalls = await Recall.countDocuments();
+        const completedRecalls = await Recall.countDocuments({ status: 'Completed' });
+        const recallScore = totalRecalls > 0 ? (completedRecalls / totalRecalls * 100) : 100;
+        const totalOrders = await Order.countDocuments();
+        const deliveredOrders = await Order.countDocuments({ status: 'Delivered' });
+        const cancelledOrders = await Order.countDocuments({ status: 'Cancelled' });
+        const fulfillmentRate = totalOrders > 0 ? (deliveredOrders / (totalOrders - cancelledOrders) * 100) : 100;
+        const overall = testingRate * 0.25 + expiryScore * 0.20 + storageScore * 0.25 + recallScore * 0.15 + fulfillmentRate * 0.15;
+        await new ComplianceSnapshot({ overall: parseFloat(overall.toFixed(1)), testingRate: parseFloat(testingRate.toFixed(1)), expiryScore: parseFloat(expiryScore.toFixed(1)), storageScore: parseFloat(storageScore.toFixed(1)), recallScore: parseFloat(recallScore.toFixed(1)), fulfillmentRate: parseFloat(fulfillmentRate.toFixed(1)) }).save();
+        console.log('✅ Compliance snapshot saved');
+    } catch (e) { console.error('Snapshot error:', e.message); }
+}
+
+// Save snapshot once per day (86400000ms)
+setInterval(saveComplianceSnapshot, 86400000);
+
 // Start Server — use http server for Socket.io
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

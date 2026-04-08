@@ -6,7 +6,7 @@ const UserSchema = new mongoose.Schema({
     password: { type: String, required: true }, // Should be hashed in a real app
     role: {
         type: String,
-        enum: ['admin', 'distributor'],
+        enum: ['admin', 'distributor', 'quality_inspector', 'warehouse_manager'],
         default: 'distributor'
     },
     companyName: { type: String }, // For distributors

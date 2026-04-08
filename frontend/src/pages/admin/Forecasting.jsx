@@ -78,7 +78,8 @@ export default function Forecasting() {
 
             {prediction && (
                 <div className="card">
-                    <h3>{prediction.product?.name} — Actual vs Predicted (SMA-{prediction.window})</h3>
+                    <h3>{prediction.product?.name} — Actual vs Predicted (SMA-{prediction.window} & EWMA α={prediction.alpha})</h3>
+                    <p className="text-xs text-secondary-color mb-3">SMA = Simple Moving Average · EWMA = Exponential Weighted Moving Average (weights recent data more)</p>
                     <ResponsiveContainer width="100%" height={350}>
                         <LineChart data={chartData}>
                             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -87,7 +88,8 @@ export default function Forecasting() {
                             <Tooltip {...tooltipStyle} />
                             <Legend />
                             <Line type="monotone" dataKey="actual" stroke="var(--info)" strokeWidth={2} dot={{ r: 4 }} name="Actual Demand" />
-                            <Line type="monotone" dataKey="predicted" stroke="var(--warning)" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 4 }} name="Predicted (SMA)" />
+                            <Line type="monotone" dataKey="predicted" stroke="var(--warning)" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 4 }} name="SMA Forecast" />
+                            <Line type="monotone" dataKey="ewma" stroke="var(--success)" strokeWidth={2} strokeDasharray="3 3" dot={{ r: 3 }} name="EWMA Forecast" />
                         </LineChart>
                     </ResponsiveContainer>
                 </div>

@@ -9,6 +9,7 @@ const SupplierSchema = new mongoose.Schema({
     gstNumber: { type: String },
     materials: [{ type: mongoose.Schema.Types.ObjectId, ref: 'RawMaterial' }],
     rating: { type: Number, min: 1, max: 5, default: 3 },
+    autoRating: { type: Number, min: 1, max: 5 }, // auto-calculated from PO performance
     status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' },
     createdAt: { type: Date, default: Date.now }
 });
