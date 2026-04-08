@@ -1,4 +1,4 @@
-# PharmaLink: A Blockchain-Inspired Pharmaceutical Supply Chain Management System
+# PharmaLink: A Blockchain-Inspired Pharmaceutical Supply Chain Management System with Advanced Analytics and Intelligent Compliance
 
 ## Aditya Raj
 ### *Computer Science and Engineering*
@@ -13,11 +13,11 @@
 
 **The pharmaceutical supply chain is one of the most regulation-intensive domains in modern industry, demanding end-to-end traceability, quality assurance, and rapid response to safety events such as product recalls. Existing systems are often fragmented, paper-based, or lack real-time visibility across stakeholders. This paper presents PharmaLink, a full-stack web application designed to digitize and intelligently manage the pharmaceutical supply chain — from raw material procurement to final product delivery.**
 
-**PharmaLink integrates a blockchain-inspired SHA-256 hash chain for immutable batch lifecycle tracking, QR code-based product verification for anti-counterfeiting, role-based access control (RBAC) with JWT authentication and Time-based One-Time Password (TOTP) two-factor authentication, demand forecasting using Simple Moving Average (SMA), ABC inventory classification using the Pareto principle, real-time notifications via WebSocket (Socket.io), and a weighted compliance scoring engine aligned with Good Manufacturing Practice (GMP) requirements. The system is built on the MERN stack (MongoDB, Express.js, React, Node.js) with a RESTful API architecture and deployed as a single-page application.**
+**PharmaLink integrates a blockchain-inspired SHA-256 hash chain for immutable batch lifecycle tracking, QR code-based product verification for anti-counterfeiting, role-based access control (RBAC) with JWT authentication and Time-based One-Time Password (TOTP) two-factor authentication, dual-model demand forecasting using Simple Moving Average (SMA) and Exponential Weighted Moving Average (EWMA), ABC inventory classification using the Pareto principle, real-time notifications via WebSocket (Socket.io), a weighted compliance scoring engine with historical trend tracking, automated supplier performance rating, recall impact analysis, and batch cost tracking with profit margin computation. The system is built on the MERN stack (MongoDB, Express.js, React, Node.js) with a RESTful API architecture and deployed as a single-page application.**
 
-**Evaluation demonstrates that PharmaLink addresses critical gaps in pharmaceutical supply chain transparency, counterfeit drug detection, storage compliance monitoring, and regulatory audit readiness, making enterprise-grade supply chain intelligence accessible to small and medium pharmaceutical manufacturers.**
+**Evaluation demonstrates that PharmaLink addresses critical gaps in pharmaceutical supply chain transparency, counterfeit drug detection, storage compliance monitoring, and regulatory audit readiness. The system further extends standard supply chain platforms with intelligent analytics including EWMA-based forecasting, compliance score history, automated supplier rating from purchase order delivery data, and financial impact quantification for product recalls — making enterprise-grade supply chain intelligence accessible to small and medium pharmaceutical manufacturers.**
 
-*Keywords – Pharmaceutical Supply Chain, Blockchain Traceability, Inventory Management, Demand Forecasting, Compliance Monitoring, MERN Stack, QR Code Verification, Real-Time Notifications, Role-Based Access Control, Good Manufacturing Practice.*
+*Keywords – Pharmaceutical Supply Chain, Blockchain Traceability, Inventory Management, Demand Forecasting, EWMA, Compliance Monitoring, MERN Stack, QR Code Verification, Real-Time Notifications, Role-Based Access Control, Good Manufacturing Practice, Supplier Performance, Recall Impact Analysis.*
 
 ---
 
@@ -33,13 +33,19 @@ The key contributions of this project include:
 
 - A blockchain-inspired immutable hash chain for batch lifecycle tracking using SHA-256 cryptographic hashing
 - QR code generation and public verification endpoint for anti-counterfeiting
-- Automated demand forecasting using a 3-month window Simple Moving Average (SMA)
+- Dual-model demand forecasting using 3-month window SMA and Exponential Weighted Moving Average (EWMA, α=0.3)
 - ABC inventory classification using MongoDB aggregation pipelines
-- A weighted compliance scoring engine across five GMP-aligned dimensions
+- A weighted compliance scoring engine across five GMP-aligned dimensions with historical snapshot tracking
 - Real-time push notifications using WebSocket (Socket.io)
-- Role-based access control (RBAC) with JWT authentication and TOTP-based two-factor authentication (2FA)
+- Role-based access control (RBAC) with JWT authentication, TOTP-based 2FA, and expanded roles (quality_inspector, warehouse_manager)
 - Comprehensive audit logging for regulatory readiness
 - First-Expired-First-Out (FEFO) batch suggestion and expiry heatmap intelligence
+- Automated supplier performance rating computed from purchase order delivery history
+- Recall impact analysis quantifying units affected, percentage distributed, and estimated financial exposure
+- Batch cost tracking with formula-based material cost breakdown and profit margin computation
+- Compliance score history via daily snapshots enabling regulatory trend analysis
+- Bulk CSV import for storage condition readings from laboratory data loggers
+- Distributor analytics portal with spend trends, order status breakdown, and top product analysis
 
 The remainder of this paper is organized as follows: Section 3 reviews related work. Section 4 describes the methodology. Section 5 presents the implementation. Section 6 covers deployment and maintenance. Section 7 discusses results. Section 8 concludes with future directions.
 
@@ -137,26 +143,27 @@ The project leverages a modern JavaScript-based full-stack architecture:
 
 #### 4. Data Modeling
 
-PharmaLink defines 16 MongoDB collections to represent all supply chain entities:
+PharmaLink defines 17 MongoDB collections to represent all supply chain entities:
 
 | Collection | Purpose |
 |---|---|
-| User | Authentication, roles, 2FA secrets |
-| Product | Product catalog with formula and storage conditions |
+| User | Authentication, roles (admin, distributor, quality_inspector, warehouse_manager), 2FA |
+| Product | Product catalog with formula, storage conditions, QC test templates, material costs |
 | RawMaterial | Raw material inventory with threshold alerts |
 | Batch | Production batches with hash chain and QR code |
 | Order | Distributor orders with shipment tracking |
 | PurchaseOrder | Supplier procurement orders |
-| Supplier | Supplier registry with ratings |
-| QualityCheck | QC test results per batch |
+| Supplier | Supplier registry with manual and auto-calculated ratings |
+| QualityCheck | QC test results per batch (product-defined test templates) |
 | StorageLog | Temperature/humidity readings with violation flags |
 | Warehouse | Warehouse registry |
 | WarehouseStock | Per-warehouse material stock levels |
-| Recall | Product recall management |
+| Recall | Product recall management with impact analysis |
 | Return | Order return processing |
 | AuditLog | Immutable action log for all system events |
 | Notification | Real-time user notifications |
 | Message | Inter-user messaging |
+| ComplianceSnapshot | Daily compliance score snapshots for trend analysis |
 
 Table 1. MongoDB Data Collections
 
@@ -172,15 +179,23 @@ H_n = SHA256(event_n || previousHash_{n-1} || timestamp_n)
 
 The genesis block uses `previousHash = "0"`. Chain integrity is verified by confirming the `previousHash` linkage across all blocks. Any tampering with a historical event invalidates all subsequent hashes, making unauthorized modifications detectable.
 
-**5.2 Demand Forecasting (Simple Moving Average)**
+**5.2 Demand Forecasting (SMA and EWMA)**
 
-PharmaLink implements a 3-month window SMA for demand prediction:
+PharmaLink implements two complementary forecasting models over a 12-month historical window.
+
+Simple Moving Average (3-month window):
 
 ```
 SMA_t = (D_{t-1} + D_{t-2} + D_{t-3}) / 3
 ```
 
-Where `D_t` is the actual order quantity in month `t`. A 3-month forward forecast is generated by iteratively applying SMA, using predicted values as inputs for subsequent months.
+Exponential Weighted Moving Average (α = 0.3):
+
+```
+EWMA_t = α × D_t + (1 − α) × EWMA_{t-1}
+```
+
+Where `D_t` is the actual order quantity in month `t` and α = 0.3 weights recent observations more heavily than older ones. Both models generate a 3-month forward forecast. EWMA is more responsive to recent demand shifts, while SMA provides a stable baseline. Both series are rendered simultaneously on the forecasting dashboard, enabling planners to compare model outputs before making production decisions.
 
 **5.3 ABC Inventory Classification**
 
@@ -212,6 +227,46 @@ Table 2. Compliance Scoring Weights
 **5.5 FEFO Expiry Intelligence**
 
 Batches are suggested in First-Expired-First-Out order, sorted by earliest expiry date. An expiry heatmap categorizes active batches into four urgency windows: Expired, Critical (≤ 30 days), Warning (31–60 days), and Caution (61–90 days).
+
+**5.6 Automated Supplier Performance Rating**
+
+Supplier ratings are auto-calculated from purchase order delivery history rather than relying on manual input:
+
+```
+DeliveryRate = ReceivedPOs / TotalSentPOs
+AutoRating = round(DeliveryRate × 5)  [clamped to 1–5]
+```
+
+The effective rating displayed is the auto-calculated value when PO history exists, falling back to the manually set rating otherwise. A supplier performance panel shows total POs, received count, pending count, total value, and delivery rate.
+
+**5.7 Recall Impact Analysis**
+
+When a recall is initiated, the system computes a financial and operational impact report:
+
+```
+TotalUnitsAffected = Σ quantity for all orders containing the recalled batch
+PercentageDistributed = (TotalUnitsAffected / BatchQuantityProduced) × 100
+EstimatedFinancialImpact = TotalUnitsAffected × pricePerUnit
+```
+
+This transforms the recall module from a notification tool into a decision-support system, providing quantified exposure data for regulatory reporting.
+
+**5.8 Batch Cost Tracking**
+
+Each batch's production cost is computed from the product formula and per-material cost configuration:
+
+```
+LineCost_i = quantityRequired_i × quantityProduced × costPerUnit_i
+TotalBatchCost = Σ LineCost_i
+CostPerProducedUnit = TotalBatchCost / quantityProduced
+ProfitMargin = ((sellingPrice − costPerProducedUnit) / sellingPrice) × 100
+```
+
+This enables profit margin analysis per batch and per product, supporting pricing and production efficiency decisions.
+
+**5.9 Compliance Score History**
+
+A `ComplianceSnapshot` document is saved daily via a server-side interval, recording all five metric values and the weighted overall score with a timestamp. The compliance dashboard renders a multi-line trend chart over the last 30 snapshots, enabling administrators to track regulatory readiness over time and identify degradation before inspections.
 
 ---
 
@@ -278,7 +333,21 @@ socket.emit('register', userId);
 
 When a recall is initiated, the system automatically identifies all distributors who received orders containing the affected batch, creates the recall record with FDA-style severity classification (Class I, II, or III), and dispatches HTML email notifications to all affected distributors via Nodemailer. The recall status progresses from Initiated → In Progress → Completed, with completion timestamp recorded for compliance reporting.
 
-#### 7. Testing and Evaluation
+An impact analysis endpoint (`GET /api/recalls/:id/impact`) computes total units affected, percentage of the batch distributed, and estimated financial impact based on product price per unit. This data is rendered in an expandable impact panel on the recalls page.
+
+#### 7. Storage Compliance Enhancements
+
+The storage compliance module was extended with two capabilities. First, a temperature and humidity trend chart renders per-batch readings over time using Recharts `LineChart`, enabling visual identification of storage condition drift. Second, a bulk CSV import endpoint (`POST /api/storage/bulk-import`) accepts arrays of readings with automatic violation detection, supporting laboratories that export data from physical data loggers.
+
+#### 8. Quality Control Templates
+
+QC test templates are now defined per product rather than hardcoded in the frontend. The `Product` model includes a `qcTests` array of `{ name, description }` objects. When a QC inspection is opened, the frontend fetches product-specific tests via `GET /api/quality/templates/:batchId`, falling back to four default tests (Visual Inspection, pH Level, Dissolution, Assay) if no custom tests are defined.
+
+#### 9. Distributor Analytics
+
+A dedicated analytics portal was added for distributors, providing monthly spend trend (area chart), order status breakdown (donut chart), and top products ordered (bar chart) — all computed client-side from the distributor's order history. This gives distributors data-driven visibility into their own procurement patterns.
+
+#### 10. Testing and Evaluation
 
 To ensure the reliability and accuracy of PharmaLink, multiple testing methodologies were applied during development:
 
@@ -352,7 +421,7 @@ The compliance scoring engine provides a quantitative, real-time measure of regu
 
 #### 4. Forecasting Performance
 
-The 3-month SMA provides a practical baseline for production planning. Historical order data is aggregated using MongoDB aggregation pipelines, grouping by product and calendar month over a 12-month window. The system generates a 3-month forward forecast with iterative SMA application. While more sophisticated models (ARIMA, LSTM) may yield higher accuracy on larger datasets, SMA offers full interpretability and zero external ML dependencies, making it appropriate for the operational context of small-to-medium pharmaceutical manufacturers.
+PharmaLink implements two complementary forecasting models. The 3-month SMA provides a stable, interpretable baseline, while EWMA (α=0.3) responds more quickly to recent demand shifts by weighting recent observations exponentially. Both models are computed server-side using MongoDB aggregation pipelines over a 12-month historical window and rendered simultaneously on the forecasting dashboard. This dual-model approach allows production planners to compare conservative (SMA) and responsive (EWMA) forecasts before committing to production schedules. While more sophisticated models (ARIMA, LSTM) may yield higher accuracy on larger datasets, SMA and EWMA offer full interpretability and zero external ML dependencies, making them appropriate for the operational context of small-to-medium pharmaceutical manufacturers.
 
 #### 5. Security Assessment
 
@@ -361,21 +430,21 @@ The multi-layer security architecture — JWT authentication, TOTP 2FA, bcrypt p
 #### 6. Challenges
 
 - **Hash Chain Storage:** The hash chain is stored in MongoDB, not a distributed ledger. A sufficiently privileged database administrator could theoretically modify records. Mitigation requires anchoring hash roots to a public blockchain.
-- **Manual Storage Logging:** Storage condition monitoring currently relies on manual data entry. Integration with IoT sensors is required for continuous, automated compliance monitoring.
-- **SMA Seasonality:** The SMA forecasting model does not account for seasonality or external demand drivers such as disease outbreaks or regulatory changes.
-- **Role Granularity:** The current two-role model (admin, distributor) does not support specialized roles such as warehouse manager, quality inspector, or regulatory officer that real-world deployments may require.
+- **Manual Storage Logging:** While bulk CSV import was added to reduce manual effort, fully automated storage monitoring still requires IoT sensor integration via MQTT.
+- **Forecasting Seasonality:** Neither SMA nor EWMA accounts for seasonality or external demand drivers such as disease outbreaks or regulatory changes. Future work should explore ARIMA or LSTM models.
+- **Role Granularity:** The system now supports four roles (admin, distributor, quality_inspector, warehouse_manager), but real-world deployments may require additional roles such as regulatory officer or logistics coordinator.
 
 ---
 
 ### *8. CONCLUSION*
 
-PharmaLink successfully demonstrates that modern web technologies can deliver enterprise-grade pharmaceutical supply chain intelligence at a fraction of the cost of traditional ERP systems. By integrating a blockchain-inspired SHA-256 hash chain for batch traceability, QR code-based anti-counterfeiting, formula-driven atomic batch production, FEFO expiry intelligence, weighted GMP compliance scoring, SMA demand forecasting, ABC inventory classification, and real-time WebSocket notifications into a unified MERN stack platform, PharmaLink addresses the critical gaps in pharmaceutical supply chain transparency, counterfeit detection, and regulatory audit readiness.
+PharmaLink successfully demonstrates that modern web technologies can deliver enterprise-grade pharmaceutical supply chain intelligence at a fraction of the cost of traditional ERP systems. By integrating a blockchain-inspired SHA-256 hash chain for batch traceability, QR code-based anti-counterfeiting, formula-driven atomic batch production, FEFO expiry intelligence, weighted GMP compliance scoring with historical trend tracking, dual-model demand forecasting (SMA and EWMA), ABC inventory classification, automated supplier performance rating, recall impact analysis, batch cost tracking with profit margin computation, and real-time WebSocket notifications into a unified MERN stack platform, PharmaLink addresses critical gaps in pharmaceutical supply chain transparency, counterfeit detection, and regulatory audit readiness.
 
-The implementation of role-based access control with JWT authentication and TOTP two-factor authentication ensures that sensitive supply chain operations are protected against unauthorized access, while the comprehensive audit logging system provides the immutable action trail required for regulatory inspections.
+The expanded role-based access control system — now supporting admin, distributor, quality_inspector, and warehouse_manager roles — with JWT authentication and TOTP two-factor authentication ensures that sensitive supply chain operations are protected against unauthorized access. The comprehensive audit logging system provides the immutable action trail required for regulatory inspections, while the compliance snapshot mechanism enables longitudinal tracking of regulatory readiness over time.
 
-The system's web-based interface, built using React 19 and Tailwind CSS, ensures ease of use and accessibility for both pharmaceutical manufacturers and distributors. The modular RESTful API architecture with 20 route groups provides a clean separation of concerns and a foundation for future enhancements.
+The system's web-based interface, built using React 19 and Tailwind CSS with a structured folder architecture (pages/auth, pages/admin, pages/distributor, pages/shared, components/layout, components/common), ensures maintainability and scalability. The modular RESTful API architecture with 20 route groups provides a clean separation of concerns and a foundation for future enhancements.
 
-In conclusion, PharmaLink contributes to the advancement of pharmaceutical supply chain digitization by providing a practical, accessible, and comprehensive platform that makes traceability, compliance, and intelligent analytics available to organizations that cannot afford traditional enterprise pharmaceutical ERP systems. Future work will focus on distributed blockchain integration, IoT sensor connectivity, advanced ML-based forecasting, and a mobile companion application for field operations.
+In conclusion, PharmaLink contributes to the advancement of pharmaceutical supply chain digitization by providing a practical, accessible, and analytically rich platform that makes traceability, compliance, and intelligent analytics available to organizations that cannot afford traditional enterprise pharmaceutical ERP systems. Future work will focus on distributed blockchain integration, IoT sensor connectivity for automated storage monitoring, advanced ML-based forecasting (ARIMA, LSTM), and a mobile companion application for field operations.
 
 ---
 
@@ -400,3 +469,9 @@ In conclusion, PharmaLink contributes to the advancement of pharmaceutical suppl
 [9] D. Ivanov, A. Dolgui, and B. Sokolov, "The impact of digital technology and Industry 4.0 on the ripple effect and supply chain risk analytics," *Int. J. Prod. Res.*, vol. 57, no. 3, pp. 829–846, 2019.
 
 [10] MongoDB Inc., "MongoDB Manual: Multi-Document ACID Transactions," MongoDB Documentation, 2023.
+
+[11] R. G. Brown, *Smoothing, Forecasting and Prediction of Discrete Time Series*. Prentice-Hall, 1963. (Foundation reference for Exponential Weighted Moving Average)
+
+[12] C. Colicchia and F. Strozzi, "Supply chain risk management: A new methodology for a systematic literature review," *Supply Chain Management: An International Journal*, vol. 17, no. 4, pp. 403–418, 2012.
+
+[13] A. Dolgui, D. Ivanov, and M. Rozhkov, "Does the ripple effect influence the bullwhip effect? An integrated analysis of structural and operational dynamics in the supply chain," *Int. J. Prod. Res.*, vol. 58, no. 5, pp. 1285–1301, 2020.
