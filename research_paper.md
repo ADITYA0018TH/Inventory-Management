@@ -2,8 +2,8 @@
 
 ### *Aditya Raj*
 ### *Computer Science and Engineering*
-### Parul University
-### *Vadodara, Gujarat, India*
+## Parul University
+### **Vadodara, Gujarat, India**
 ### *2203051050671@paruluniversity.ac.in*
 ### *Project Guide – Prof. Ashish Patel*
 
