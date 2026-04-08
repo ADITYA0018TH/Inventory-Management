@@ -1,6 +1,6 @@
 # PharmaLink: A Blockchain-Inspired Pharmaceutical Supply Chain Management System
 
-### *Aditya Raj*
+### Aditya Raj
 ### *Computer Science and Engineering*
 ## Parul University
 ### **Vadodara, Gujarat, India**
