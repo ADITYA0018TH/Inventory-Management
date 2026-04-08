@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Bell as FiBell, Check as FiCheck } from 'lucide-react';
-import API from '../api';
+import API from '../../api';
 import { io } from 'socket.io-client';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function NotificationBell() {
     const [notifications, setNotifications] = useState([]);

@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import {
     Home as FiHome, Package as FiPackage, Layers as FiLayers, ShoppingCart as FiShoppingCart,
     Box as FiBox, LogOut as FiLogOut, User as FiUser, Search as FiSearch, Users as FiUsers,

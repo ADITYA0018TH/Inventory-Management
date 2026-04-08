@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import SplitText from '../components/SplitText';
+import SplitText from '../../components/common/SplitText';
 import { motion } from 'framer-motion';
 import {
     Package, Layers, ShieldCheck, TrendingUp, Thermometer, AlertTriangle,

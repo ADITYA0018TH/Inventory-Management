@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { FileText as FiFileText } from 'lucide-react';
 import API from '../../api';
 import toast from 'react-hot-toast';
-import Pagination from '../../components/Pagination';
-import { SkeletonTable } from '../../components/SkeletonLoader';
+import Pagination from '../../components/common/Pagination';
+import { SkeletonTable } from '../../components/common/SkeletonLoader';
 
 export default function AuditLog() {
     const [logs, setLogs] = useState([]);

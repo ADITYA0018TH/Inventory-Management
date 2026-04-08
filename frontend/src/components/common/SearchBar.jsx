@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search as FiSearch, Package as FiPackage, Box as FiBox, Layers as FiLayers, ShoppingCart as FiShoppingCart } from 'lucide-react';
-import API from '../api';
+import API from '../../api';
 
 export default function SearchBar() {
     const [query, setQuery] = useState('');

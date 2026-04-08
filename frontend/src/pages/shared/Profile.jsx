@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { User as FiUser, Lock as FiLock, Save as FiSave, Shield as FiShield } from 'lucide-react';
-import API from '../api';
+import API from '../../api';
 import toast from 'react-hot-toast';
 
 export default function Profile() {

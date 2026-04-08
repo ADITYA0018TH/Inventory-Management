@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
-import SearchBar from './SearchBar';
-import NotificationBell from './NotificationBell';
-import SessionTimeout from './SessionTimeout';
+import SearchBar from '../common/SearchBar';
+import NotificationBell from '../common/NotificationBell';
+import SessionTimeout from '../common/SessionTimeout';
 import { Menu as FiMenu } from 'lucide-react';
 
 export default function Layout() {

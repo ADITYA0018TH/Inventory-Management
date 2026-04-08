@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
-import ProtectedRoute from './components/ProtectedRoute';
-import Layout from './components/Layout';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import ProtectedRoute from './components/common/ProtectedRoute';
+import Layout from './components/layout/Layout';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
 import Dashboard from './pages/admin/Dashboard';
 import Inventory from './pages/admin/Inventory';
 import Products from './pages/admin/Products';
@@ -33,9 +33,9 @@ import DistributorReturns from './pages/distributor/Returns';
 import Scanner from './pages/distributor/Scanner';
 import DistributorAnalytics from './pages/distributor/Analytics';
 
-import Messages from './pages/Messages';
-import Profile from './pages/Profile';
-import Landing from './pages/Landing';
+import Messages from './pages/shared/Messages';
+import Profile from './pages/shared/Profile';
+import Landing from './pages/public/Landing';
 import './index.css';
 
 function AppRoutes() {
