@@ -35,6 +35,7 @@ import DistributorAnalytics from './pages/distributor/Analytics';
 
 import Messages from './pages/Messages';
 import Profile from './pages/Profile';
+import Landing from './pages/Landing';
 import './index.css';
 
 function AppRoutes() {
@@ -44,6 +45,7 @@ function AppRoutes() {
 
   return (
     <Routes>
+      <Route path="/" element={<Landing />} />
       <Route path="/login" element={user ? <Navigate to={user.role === 'admin' ? '/admin/dashboard' : '/distributor/catalog'} /> : <Login />} />
       <Route path="/register" element={user ? <Navigate to={user.role === 'admin' ? '/admin/dashboard' : '/distributor/catalog'} /> : <Register />} />
 
@@ -87,7 +89,7 @@ function AppRoutes() {
         <Route path="profile" element={<Profile />} />
       </Route>
 
-      <Route path="*" element={<Navigate to="/login" />} />
+      <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 }

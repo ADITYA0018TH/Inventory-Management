@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import API from '../api';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, Box, EyeOff, ShoppingCart, Factory, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function Login() {
@@ -57,22 +57,22 @@ export default function Login() {
             <div className="auth-container">
                 <div className="auth-left">
                     <div className="auth-branding">
-                        <img src="/logo.svg" alt="PharmaLink" className="auth-logo" />
+                        <img src="/logo.svg" alt="PharmaLink" className="bg-white rounded-xl" style={{ padding: '10px', width: '72px', height: '72px' }} />
                         <h1>PharmaLink</h1>
                         <p>Supply Chain & Inventory Management System</p>
                     </div>
                     <div className="auth-features">
                         <div className="feature-item">
-                            <span>📦</span><span>Track Raw Materials & Inventory</span>
+                            <span><Box className='text-white'/></span><span>Track Raw Materials & Inventory</span>
                         </div>
                         <div className="feature-item">
-                            <span>🏭</span><span>Batch Manufacturing with Formula Logic</span>
+                            <span><Factory className='text-white'/></span><span>Batch Manufacturing with Formula Logic</span>
                         </div>
                         <div className="feature-item">
-                            <span>📱</span><span>QR Code Based Track & Trace</span>
+                            <span><Smartphone className='text-white'/></span><span>QR Code Based Track & Trace</span>
                         </div>
                         <div className="feature-item">
-                            <span>🛒</span><span>Distributor Ordering System</span>
+                            <span><ShoppingCart className='text-white'/></span><span>Distributor Ordering System</span>
                         </div>
                     </div>
                 </div>
@@ -85,7 +85,7 @@ export default function Login() {
                                 <label>Verification Code</label>
                                 <input type="text" value={otpCode} onChange={e => setOtpCode(e.target.value)} placeholder="000000" maxLength={6} required style={{ textAlign: 'center', fontSize: 24, letterSpacing: 8 }} />
                             </div>
-                            <Button type="submit" className="w-full" disabled={loading}>
+                            <Button type="submit" className="w-full" style={{ background: '#6366f1', color: '#fff' }} disabled={loading}>
                                 {loading ? 'Verifying...' : 'Verify & Sign In'}
                             </Button>
                             <p className="auth-footer mt-4">
@@ -109,7 +109,7 @@ export default function Login() {
                                     </button>
                                 </div>
                             </div>
-                            <Button type="submit" className="w-full" disabled={loading}>
+                            <Button type="submit" className="w-full" style={{ background: '#6366f1', color: '#fff' }} disabled={loading}>
                                 {loading ? 'Signing in...' : 'Sign In'}
                             </Button>
                             <p className="auth-footer">

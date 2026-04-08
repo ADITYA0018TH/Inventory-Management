@@ -1,6 +1,13 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Home as FiHome, Package as FiPackage, Layers as FiLayers, ShoppingCart as FiShoppingCart, Box as FiBox, LogOut as FiLogOut, User as FiUser, Search as FiSearch, Users as FiUsers, FileText as FiFileText, Settings as FiSettings, Truck as FiTruck, AlertTriangle as FiAlertTriangle, MessageSquare as FiMessageSquare, Clock as FiClock, Shield as FiShield, Thermometer as FiThermometer, TrendingUp as FiTrendingUp, Clipboard as FiClipboard, MapPin as FiMapPin, Camera as FiCamera, AlertCircle as FiAlertCircle } from 'lucide-react';
+import {
+    Home as FiHome, Package as FiPackage, Layers as FiLayers, ShoppingCart as FiShoppingCart,
+    Box as FiBox, LogOut as FiLogOut, User as FiUser, Search as FiSearch, Users as FiUsers,
+    FileText as FiFileText, Settings as FiSettings, Truck as FiTruck,
+    AlertTriangle as FiAlertTriangle, MessageSquare as FiMessageSquare, Clock as FiClock,
+    Shield as FiShield, Thermometer as FiThermometer, TrendingUp as FiTrendingUp,
+    Clipboard as FiClipboard, MapPin as FiMapPin, Camera as FiCamera, AlertCircle as FiAlertCircle
+} from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 
 export default function Sidebar({ isOpen, onClose }) {
@@ -8,10 +15,7 @@ export default function Sidebar({ isOpen, onClose }) {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const handleLogout = () => {
-        logout();
-        navigate('/login');
-    };
+    const handleLogout = () => { logout(); navigate('/login'); };
 
     const adminLinks = [
         {
@@ -73,8 +77,8 @@ export default function Sidebar({ isOpen, onClose }) {
             <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
                 <div className="sidebar-header">
                     <div className="sidebar-logo">
-                        <img src="/logo.svg" alt="PharmaLink" className="logo-icon" />
-                        <h1>PharmaLink</h1>
+                        <img src="/logo.svg" alt="PharmaLink" className="logo-icon bg-white rounded-lg p-1" />
+                        <h1 style={{ background: 'none', WebkitTextFillColor: '#0f172a', color: '#0f172a' }}>PharmaLink</h1>
                     </div>
                 </div>
 

@@ -32,21 +32,21 @@ export default function Register() {
             <div className="auth-container">
                 <div className="auth-left">
                     <div className="auth-branding">
-                        <img src="/logo.svg" alt="PharmaLink" className="auth-logo" />
+                        <img src="/logo.svg" alt="PharmaLink" className="bg-white rounded-xl" style={{ padding: '10px', width: '72px', height: '72px' }} />
                         <h1>PharmaLink</h1>
                         <p>Supply Chain & Inventory Management System</p>
                     </div>
                 </div>
-                <div className="auth-right">
-                    <form className="auth-form" onSubmit={handleSubmit}>
-                        <h2>Create Account</h2>
-                        <p className="auth-subtitle">Register to get started</p>
-                        <div className="form-row">
-                            <div className="form-group">
+                <div className="auth-right" style={{ padding: '32px 36px', overflowY: 'auto' }}>
+                    <form className="auth-form" onSubmit={handleSubmit} style={{ maxWidth: 440, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <h2 style={{ marginBottom: 4 }}>Create Account</h2>
+                        <p className="auth-subtitle" style={{ marginBottom: 20 }}>Register to get started</p>
+                        <div className="form-row" style={{ marginBottom: 18 }}>
+                            <div className="form-group" style={{ marginBottom: 0 }}>
                                 <label>Full Name</label>
                                 <input type="text" name="name" value={form.name} onChange={handleChange} placeholder="John Doe" required />
                             </div>
-                            <div className="form-group">
+                            <div className="form-group" style={{ marginBottom: 0 }}>
                                 <label>Role</label>
                                 <Select value={form.role} onValueChange={(val) => setForm({ ...form, role: val })}>
                                     <SelectTrigger>
@@ -59,11 +59,11 @@ export default function Register() {
                                 </Select>
                             </div>
                         </div>
-                        <div className="form-group">
+                        <div className="form-group" style={{ marginBottom: 18 }}>
                             <label>Email Address</label>
                             <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="you@company.com" required />
                         </div>
-                        <div className="form-group">
+                        <div className="form-group" style={{ marginBottom: 18 }}>
                             <label>Password</label>
                             <div className="password-input-wrapper">
                                 <input type={showPassword ? 'text' : 'password'} name="password" value={form.password} onChange={handleChange} placeholder="••••••••" required />
@@ -77,8 +77,8 @@ export default function Register() {
                             </div>
                         </div>
                         {form.role === 'distributor' && (
-                            <div className="form-row">
-                                <div className="form-group">
+                            <div className="form-row" style={{ marginBottom: 18 }}>
+                                <div className="form-group" style={{ marginBottom: 0 }}>
                                     <label>Company Name</label>
                                     <input type="text" name="companyName" value={form.companyName} onChange={handleChange} placeholder="ABC Distributors" />
                                 </div>
@@ -88,10 +88,10 @@ export default function Register() {
                                 </div>
                             </div>
                         )}
-                        <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
+                        <button type="submit" className="btn btn-primary btn-full" style={{ marginTop: 8 }} disabled={loading}>
                             {loading ? 'Creating...' : 'Create Account'}
                         </button>
-                        <p className="auth-footer">
+                        <p className="auth-footer" style={{ marginTop: 20 }}>
                             Already have an account? <Link to="/login">Sign in</Link>
                         </p>
                     </form>

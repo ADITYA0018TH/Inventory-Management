@@ -17,7 +17,7 @@ export default function Layout() {
                     <button
                         className="mobile-toggle"
                         onClick={() => setIsSidebarOpen((prev) => !prev)}
-                        aria-label={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+                        aria-label="Toggle sidebar"
                     >
                         <FiMenu />
                     </button>

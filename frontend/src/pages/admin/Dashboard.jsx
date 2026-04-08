@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import API from '../../api';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { Package as FiPackage, AlertTriangle as FiAlertTriangle, DollarSign as FiDollarSign, ShoppingCart as FiShoppingCart, Layers as FiLayers, Clock as FiClock } from 'lucide-react';
+import { Package as FiPackage, AlertTriangle as FiAlertTriangle, IndianRupee as FiIndianRupee, ShoppingCart as FiShoppingCart, Layers as FiLayers, Clock as FiClock } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const COLORS = ['#7c9dff', '#22d3ee', '#fbbf24', '#2dd4bf', '#f87171', '#8b8cff'];
@@ -105,7 +105,7 @@ export default function Dashboard() {
                     </div>
                 </div>
                 <div className="stat-card stat-green">
-                    <div className="stat-icon"><FiDollarSign /></div>
+                    <div className="stat-icon"><FiIndianRupee /></div>
                     <div className="stat-info">
                         <span className="stat-value">₹{stats?.totalRevenue?.toLocaleString() || 0}</span>
                         <span className="stat-label">Revenue</span>

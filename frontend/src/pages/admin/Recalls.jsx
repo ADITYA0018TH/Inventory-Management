@@ -115,7 +115,7 @@ export default function Recalls() {
                 <table className="data-table">
                     <thead>
                         <tr>
-                        <th>Recall ID</th><th>Batch</th><th>Product</th><th>Severity</th>
+                            <th>Recall ID</th><th>Batch</th><th>Product</th><th>Severity</th>
                             <th>Status</th><th>Affected</th><th>Date</th><th>Actions</th>
                         </tr>
                     </thead>
@@ -158,11 +158,7 @@ export default function Recalls() {
                     </tbody>
                 </table>
             </div>
-        </div>
-    );
-}
 
-            {/* Impact Analysis Panel */}
             {impact && (
                 <div className="card mt-4">
                     <h3><FiBarChart2 className="inline mr-2" />Recall Impact Analysis — {impact.recallId}</h3>
@@ -190,7 +186,9 @@ export default function Recalls() {
                     </div>
                     {impact.affectedDistributors?.length > 0 && (
                         <table className="data-table mt-4">
-                            <thead><tr><th>Distributor</th><th>Company</th><th>Email</th></tr></thead>
+                            <thead>
+                                <tr><th>Distributor</th><th>Company</th><th>Email</th></tr>
+                            </thead>
                             <tbody>
                                 {impact.affectedDistributors.map(d => (
                                     <tr key={d._id}>
