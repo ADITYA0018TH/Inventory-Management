@@ -1,11 +1,11 @@
 # PharmaLink: A Blockchain-Inspired Pharmaceutical Supply Chain Management System
 
-Aditya Raj
-Computer Science and Engineering
-Parul University
-Vadodara, Gujarat, India
-2203051050671@paruluniversity.ac.in
-Project Guide – Prof. Ashish Patel
+**Aditya Raj**
+**Computer Science and Engineering**
+**Parul University**
+**Vadodara, Gujarat, India**
+**2203051050671@paruluniversity.ac.in**
+**Project Guide – Prof. Ashish Patel**
 
 ---
 
