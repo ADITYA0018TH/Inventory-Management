@@ -49,9 +49,39 @@ export default function Sidebar({ isOpen, onClose }) {
         },
         {
             group: 'System', items: [
-                { to: '/messages', label: 'Messages', icon: <FiMessageSquare /> },
+                { to: '/app/messages', label: 'Messages', icon: <FiMessageSquare /> },
                 { to: '/admin/users', label: 'User Management', icon: <FiUser /> },
                 { to: '/admin/audit-log', label: 'Audit Log', icon: <FiClock /> },
+            ]
+        }
+    ];
+
+    const qualityInspectorLinks = [
+        {
+            group: 'Quality', items: [
+                { to: '/admin/quality', label: 'Quality Control', icon: <FiSearch /> },
+                { to: '/admin/batches', label: 'Batches', icon: <FiLayers /> },
+            ]
+        },
+        {
+            group: 'System', items: [
+                { to: '/app/messages', label: 'Messages', icon: <FiMessageSquare /> },
+            ]
+        }
+    ];
+
+    const warehouseManagerLinks = [
+        {
+            group: 'Warehouse', items: [
+                { to: '/admin/storage', label: 'Storage Compliance', icon: <FiThermometer /> },
+                { to: '/admin/inventory', label: 'Raw Materials', icon: <FiBox /> },
+                { to: '/admin/warehouses', label: 'Warehouses', icon: <FiMapPin /> },
+                { to: '/admin/expiry', label: 'Expiry Intelligence', icon: <FiAlertCircle /> },
+            ]
+        },
+        {
+            group: 'System', items: [
+                { to: '/app/messages', label: 'Messages', icon: <FiMessageSquare /> },
             ]
         }
     ];
@@ -65,12 +95,15 @@ export default function Sidebar({ isOpen, onClose }) {
                 { to: '/distributor/returns', label: 'My Returns', icon: <FiAlertTriangle /> },
                 { to: '/distributor/verify', label: 'Verify Batch', icon: <FiSearch /> },
                 { to: '/distributor/scanner', label: 'QR Scanner', icon: <FiCamera /> },
-                { to: '/messages', label: 'Messages', icon: <FiMessageSquare /> },
+                { to: '/app/messages', label: 'Messages', icon: <FiMessageSquare /> },
             ]
         }
     ];
 
-    const roleLinks = user?.role === 'admin' ? adminLinks : distributorLinks;
+    const roleLinks = user?.role === 'admin' ? adminLinks
+        : user?.role === 'quality_inspector' ? qualityInspectorLinks
+        : user?.role === 'warehouse_manager' ? warehouseManagerLinks
+        : distributorLinks;
 
     return (
         <>
@@ -110,7 +143,7 @@ export default function Sidebar({ isOpen, onClose }) {
                             <span className="user-role">{user?.role}</span>
                         </div>
                     </div>
-                    <Link to="/profile" className="profile-link" onClick={onClose}>
+                    <Link to="/app/profile" className="profile-link" onClick={onClose}>
                         <FiSettings /> <span>Profile</span>
                     </Link>
                     <button className="logout-btn" onClick={handleLogout}>

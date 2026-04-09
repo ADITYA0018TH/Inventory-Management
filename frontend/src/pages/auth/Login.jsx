@@ -29,7 +29,11 @@ export default function Login() {
                 return;
             }
             toast.success(`Welcome back, ${user.name}!`);
-            navigate(user.role === 'admin' ? '/admin/dashboard' : '/distributor/catalog');
+            const home = user.role === 'admin' ? '/admin/dashboard'
+                : user.role === 'quality_inspector' ? '/admin/quality'
+                : user.role === 'warehouse_manager' ? '/admin/storage'
+                : '/distributor/catalog';
+            navigate(home);
         } catch (err) {
             toast.error(err.response?.data?.message || 'Login failed');
         } finally {

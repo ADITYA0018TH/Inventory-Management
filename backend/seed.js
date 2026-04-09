@@ -26,6 +26,18 @@ const users = [
         role: 'distributor',
         companyName: 'PharmaLink Distributors',
         gstNumber: '29ABCDE1234F1Z5'
+    },
+    {
+        name: 'Quality Inspector',
+        email: 'inspector@pharmalink.com',
+        password: 'Inspector@123',
+        role: 'quality_inspector'
+    },
+    {
+        name: 'Warehouse Manager',
+        email: 'warehouse@pharmalink.com',
+        password: 'Warehouse@123',
+        role: 'warehouse_manager'
     }
 ];
 

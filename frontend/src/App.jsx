@@ -43,13 +43,21 @@ function AppRoutes() {
 
   if (loading) return <div className="loading-screen"><div className="spinner"></div></div>;
 
+  const getHome = (role) => {
+    if (role === 'admin') return '/admin/dashboard';
+    if (role === 'quality_inspector') return '/admin/quality';
+    if (role === 'warehouse_manager') return '/admin/storage';
+    if (role === 'distributor') return '/distributor/catalog';
+    return '/';
+  };
+
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
-      <Route path="/login" element={user ? <Navigate to={user.role === 'admin' ? '/admin/dashboard' : '/distributor/catalog'} /> : <Login />} />
-      <Route path="/register" element={user ? <Navigate to={user.role === 'admin' ? '/admin/dashboard' : '/distributor/catalog'} /> : <Register />} />
+      <Route path="/login" element={user ? <Navigate to={getHome(user.role)} /> : <Login />} />
+      <Route path="/register" element={user ? <Navigate to={getHome(user.role)} /> : <Register />} />
 
-      {/* Admin Routes */}
+      {/* Admin + inspector + warehouse Routes */}
       <Route path="/admin" element={<ProtectedRoute role="admin"><Layout /></ProtectedRoute>}>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="reports" element={<Reports />} />
@@ -63,7 +71,6 @@ function AppRoutes() {
         <Route path="returns" element={<AdminReturns />} />
         <Route path="users" element={<UserManagement />} />
         <Route path="audit-log" element={<AuditLog />} />
-        {/* New Feature Routes */}
         <Route path="expiry" element={<ExpiryIntelligence />} />
         <Route path="recalls" element={<Recalls />} />
         <Route path="storage" element={<StorageCompliance />} />
@@ -83,8 +90,8 @@ function AppRoutes() {
         <Route path="scanner" element={<Scanner />} />
       </Route>
 
-      {/* Shared Routes */}
-      <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+      {/* Shared Routes — messages & profile accessible to all logged-in users */}
+      <Route path="/app" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route path="messages" element={<Messages />} />
         <Route path="profile" element={<Profile />} />
       </Route>

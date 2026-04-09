@@ -3,6 +3,7 @@ import API from '../../api';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Package as FiPackage, AlertTriangle as FiAlertTriangle, IndianRupee as FiIndianRupee, ShoppingCart as FiShoppingCart, Layers as FiLayers, Clock as FiClock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useAuth } from '../../context/AuthContext';
 
 const COLORS = ['#7c9dff', '#22d3ee', '#fbbf24', '#2dd4bf', '#f87171', '#8b8cff'];
 
@@ -23,6 +24,7 @@ const DATE_FILTERS = [
 ];
 
 export default function Dashboard() {
+    const { user } = useAuth();
     const [stats, setStats] = useState(null);
     const [alerts, setAlerts] = useState([]);
     const [expiring, setExpiring] = useState([]);
@@ -37,13 +39,15 @@ export default function Dashboard() {
     const loadDashboard = async () => {
         try {
             const params = dateFilter > 0 ? `?days=${dateFilter}` : '';
-            const [statsRes, alertsRes, expiringRes, productsRes, batchesRes] = await Promise.all([
-                API.get(`/orders/stats${params}`),
+            const isAdmin = user?.role === 'admin';
+            const calls = [
+                isAdmin ? API.get(`/orders/stats${params}`) : Promise.resolve({ data: null }),
                 API.get('/raw-materials/alerts'),
                 API.get('/batches/expiring'),
                 API.get('/products'),
-                API.get(`/batches${params}`)
-            ]);
+                API.get('/batches'),
+            ];
+            const [statsRes, alertsRes, expiringRes, productsRes, batchesRes] = await Promise.all(calls);
             setStats(statsRes.data);
             setAlerts(alertsRes.data);
             setExpiring(expiringRes.data);

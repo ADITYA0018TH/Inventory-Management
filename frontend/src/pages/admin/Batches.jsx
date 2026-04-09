@@ -1,10 +1,39 @@
 import { useState, useEffect } from 'react';
-import API from '../../api';
-import { Plus as FiPlus, Check as FiCheck, X as FiX, Printer as FiPrinter, Download as FiDownload } from 'lucide-react';
+import API, { getBaseURL } from '../../api';
+import { Plus, Download, X, Layers, CheckCircle, Truck, FlaskConical, QrCode, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Modal, ModalBody, ModalContent, ModalFooter } from '@/components/ui/animated-modal';
+
+const STATUS_CONFIG = {
+    'In Production': { color: '#3b82f6', bg: '#eff6ff', icon: <FlaskConical size={12} /> },
+    'Quality Check':  { color: '#f59e0b', bg: '#fffbeb', icon: <AlertCircle size={12} /> },
+    'Released':       { color: '#10b981', bg: '#f0fdf4', icon: <CheckCircle size={12} /> },
+    'Shipped':        { color: '#8b5cf6', bg: '#f5f3ff', icon: <Truck size={12} /> },
+};
+
+function StatusBadge({ status }) {
+    const cfg = STATUS_CONFIG[status] || { color: '#94a3b8', bg: '#f1f5f9', icon: null };
+    return (
+        <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: 5,
+            background: cfg.bg, color: cfg.color,
+            fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 999,
+            border: `1px solid ${cfg.color}30`
+        }}>
+            {cfg.icon} {status}
+        </span>
+    );
+}
+
+function ExpiryBadge({ expDate }) {
+    const days = Math.ceil((new Date(expDate) - new Date()) / 86400000);
+    if (days < 0) return <span style={{ fontSize: 11, fontWeight: 700, color: '#ef4444', background: '#fee2e2', padding: '2px 8px', borderRadius: 6 }}>Expired</span>;
+    if (days <= 30) return <span style={{ fontSize: 11, fontWeight: 700, color: '#ef4444', background: '#fee2e2', padding: '2px 8px', borderRadius: 6 }}>{days}d left</span>;
+    if (days <= 90) return <span style={{ fontSize: 11, fontWeight: 700, color: '#f59e0b', background: '#fffbeb', padding: '2px 8px', borderRadius: 6 }}>{days}d left</span>;
+    return <span style={{ fontSize: 12, color: '#64748b' }}>{new Date(expDate).toLocaleDateString()}</span>;
+}
 
 export default function Batches() {
     const [batches, setBatches] = useState([]);
@@ -12,6 +41,8 @@ export default function Batches() {
     const [showForm, setShowForm] = useState(false);
     const [form, setForm] = useState({ batchId: '', productId: '', quantityProduced: '', mfgDate: '', expDate: '' });
     const [selectedBatch, setSelectedBatch] = useState(null);
+    const [search, setSearch] = useState('');
+    const [filterStatus, setFilterStatus] = useState('');
 
     useEffect(() => { loadData(); }, []);
 
@@ -22,13 +53,11 @@ export default function Batches() {
         } catch { toast.error('Failed to load data'); }
     };
 
-    const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             await API.post('/batches', form);
-            toast.success('Batch created! Raw materials deducted automatically.');
+            toast.success('Batch created — raw materials deducted');
             setShowForm(false);
             setForm({ batchId: '', productId: '', quantityProduced: '', mfgDate: '', expDate: '' });
             loadData();
@@ -36,58 +65,92 @@ export default function Batches() {
     };
 
     const updateStatus = async (id, status) => {
-        try {
-            await API.put(`/batches/${id}/status`, { status });
-            toast.success(`Status updated to ${status}`);
-            loadData();
-        } catch { toast.error('Status update failed'); }
+        try { await API.put(`/batches/${id}/status`, { status }); toast.success(`Status → ${status}`); loadData(); }
+        catch { toast.error('Status update failed'); }
     };
 
-    const exportCSV = () => {
-        window.open('http://localhost:5001/api/export/batches', '_blank');
-    };
+    const counts = Object.keys(STATUS_CONFIG).reduce((acc, s) => {
+        acc[s] = batches.filter(b => b.status === s).length;
+        return acc;
+    }, {});
 
-    const statusColors = { 'In Production': 'badge-blue', 'Quality Check': 'badge-amber', 'Released': 'badge-green', 'Shipped': 'badge-purple' };
+    const filtered = batches.filter(b => {
+        const matchSearch = !search || b.batchId.toLowerCase().includes(search.toLowerCase()) || b.productId?.name?.toLowerCase().includes(search.toLowerCase());
+        const matchStatus = !filterStatus || b.status === filterStatus;
+        return matchSearch && matchStatus;
+    });
 
     return (
         <div className="page">
             <div className="page-header">
                 <div>
                     <h1>Batch Management</h1>
-                    <p>Track production batches and expiry dates</p>
+                    <p>Track production batches, QR codes, and expiry dates</p>
                 </div>
                 <div className="header-actions">
-                    <button className="btn btn-secondary" onClick={exportCSV}><FiDownload /> Export CSV</button>
+                    <button className="btn btn-ghost" onClick={() => window.open(`${getBaseURL()}/api/export/batches`, '_blank')}>
+                        <Download size={15} /> Export CSV
+                    </button>
                     <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
-                        <FiPlus /> Create Batch
+                        <Plus size={15} /> Create Batch
                     </button>
                 </div>
             </div>
 
+            {/* Status summary cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 20 }}>
+                {Object.entries(STATUS_CONFIG).map(([status, cfg]) => (
+                    <div key={status} onClick={() => setFilterStatus(filterStatus === status ? '' : status)}
+                        style={{
+                            background: filterStatus === status ? cfg.bg : '#fff',
+                            border: `1px solid ${filterStatus === status ? cfg.color + '60' : '#e2e8f0'}`,
+                            borderRadius: 12, padding: '14px 16px', cursor: 'pointer',
+                            transition: 'all 0.15s', display: 'flex', alignItems: 'center', gap: 12
+                        }}>
+                        <div style={{ width: 36, height: 36, borderRadius: 10, background: cfg.bg, color: cfg.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            {cfg.icon}
+                        </div>
+                        <div>
+                            <div style={{ fontSize: 22, fontWeight: 800, color: cfg.color, lineHeight: 1 }}>{counts[status] || 0}</div>
+                            <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>{status}</div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Create form */}
             {showForm && (
-                <div className="card form-card">
-                    <h3>Create New Batch</h3>
-                    <p className="form-hint">⚠️ Creating a batch will automatically deduct raw materials based on the product formula.</p>
+                <div style={{ background: '#fff', border: '1px solid #6366f1', borderLeft: '4px solid #6366f1', borderRadius: 14, padding: 24, marginBottom: 20 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                        <h3 style={{ margin: 0 }}>Create New Batch</h3>
+                        <button onClick={() => setShowForm(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}><X size={18} /></button>
+                    </div>
+                    <p style={{ fontSize: 12, color: '#f59e0b', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 8, padding: '8px 12px', marginBottom: 16 }}>
+                        Raw materials will be automatically deducted based on the product formula.
+                    </p>
                     <form onSubmit={handleSubmit}>
                         <div className="form-row">
-                            <div className="form-group"><label>Batch ID</label><input type="text" name="batchId" value={form.batchId} onChange={handleChange} placeholder="AST-2026-001" required /></div>
-                            <div className="form-group"><label>Product</label>
-                                <Select value={form.productId} onValueChange={(val) => setForm(prev => ({ ...prev, productId: val }))}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select Product" />
-                                    </SelectTrigger>
+                            <div className="form-group">
+                                <label>Batch ID</label>
+                                <input type="text" value={form.batchId} onChange={e => setForm({ ...form, batchId: e.target.value })} placeholder="AST-2026-001" required />
+                            </div>
+                            <div className="form-group">
+                                <label>Product</label>
+                                <Select value={form.productId} onValueChange={val => setForm(p => ({ ...p, productId: val }))}>
+                                    <SelectTrigger><SelectValue placeholder="Select Product" /></SelectTrigger>
                                     <SelectContent>
-                                        {products.map(p => (
-                                            <SelectItem key={p._id} value={p._id}>{p.name} ({p.type})</SelectItem>
-                                        ))}
+                                        {products.map(p => <SelectItem key={p._id} value={p._id}>{p.name} ({p.type})</SelectItem>)}
                                     </SelectContent>
                                 </Select>
                             </div>
+                            <div className="form-group">
+                                <label>Quantity</label>
+                                <input type="number" value={form.quantityProduced} onChange={e => setForm({ ...form, quantityProduced: e.target.value })} placeholder="1000" required />
+                            </div>
                         </div>
                         <div className="form-row">
-                            <div className="form-group"><label>Quantity to Produce</label><input type="number" name="quantityProduced" value={form.quantityProduced} onChange={handleChange} placeholder="1000" required /></div>
-                            <div className="form-group"><label>Mfg Date</label><DatePicker value={form.mfgDate} onChange={(date) => setForm({ ...form, mfgDate: date })} /></div>
-                            <div className="form-group"><label>Expiry Date</label><DatePicker value={form.expDate} onChange={(date) => setForm({ ...form, expDate: date })} /></div>
+                            <div className="form-group"><label>Mfg Date</label><DatePicker value={form.mfgDate} onChange={date => setForm({ ...form, mfgDate: date })} /></div>
+                            <div className="form-group"><label>Expiry Date</label><DatePicker value={form.expDate} onChange={date => setForm({ ...form, expDate: date })} /></div>
                         </div>
                         <div className="form-actions">
                             <button type="submit" className="btn btn-primary">Create Batch</button>
@@ -97,64 +160,108 @@ export default function Batches() {
                 </div>
             )}
 
+            {/* Table */}
             <div className="card">
+                <div style={{ display: 'flex', gap: 12, marginBottom: 16, alignItems: 'center' }}>
+                    <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search batch ID or product..."
+                        style={{ flex: 1, maxWidth: 300, height: 36, padding: '0 12px', fontSize: 13, background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, color: '#0f172a' }} />
+                    {filterStatus && (
+                        <button onClick={() => setFilterStatus('')} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#6366f1', background: '#ede9fe', border: 'none', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontWeight: 600 }}>
+                            <X size={12} /> Clear filter
+                        </button>
+                    )}
+                    <span style={{ fontSize: 12, color: '#94a3b8', marginLeft: 'auto' }}>{filtered.length} batches</span>
+                </div>
+
                 <table className="data-table">
                     <thead>
-                        <tr><th>Batch ID</th><th>Product</th><th>Quantity</th><th>Mfg Date</th><th>Exp Date</th><th>Status</th><th>QR</th><th>Actions</th></tr>
+                        <tr>
+                            <th>Batch ID</th>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Mfg Date</th>
+                            <th>Expiry</th>
+                            <th>Status</th>
+                            <th>QR</th>
+                            <th>Update Status</th>
+                        </tr>
                     </thead>
                     <tbody>
-                        {batches.map(b => (
+                        {filtered.map(b => (
                             <tr key={b._id}>
-                                <td className="td-bold">{b.batchId}</td>
-                                <td>{b.productId?.name || '—'}</td>
-                                <td>{b.quantityProduced?.toLocaleString()}</td>
-                                <td>{new Date(b.mfgDate).toLocaleDateString()}</td>
-                                <td>{new Date(b.expDate).toLocaleDateString()}</td>
-                                <td><span className={`badge ${statusColors[b.status]}`}>{b.status}</span></td>
                                 <td>
-                                    {b.qrCodeData && (
-                                        <button className="btn btn-sm btn-ghost" onClick={() => setSelectedBatch(b)}>View QR</button>
-                                    )}
+                                    <span style={{ fontWeight: 700, color: '#0f172a', fontFamily: 'monospace', fontSize: 13 }}>{b.batchId}</span>
                                 </td>
                                 <td>
-                                    <Select value={b.status} onValueChange={(val) => updateStatus(b._id, val)}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select Status" />
-                                        </SelectTrigger>
+                                    <div style={{ fontWeight: 500, color: '#0f172a', fontSize: 13 }}>{b.productId?.name || '—'}</div>
+                                    {b.productId?.type && (
+                                        <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 1 }}>{b.productId.type}</div>
+                                    )}
+                                </td>
+                                <td style={{ fontWeight: 600, color: '#475569' }}>{b.quantityProduced?.toLocaleString()}</td>
+                                <td style={{ fontSize: 12, color: '#64748b' }}>{new Date(b.mfgDate).toLocaleDateString()}</td>
+                                <td><ExpiryBadge expDate={b.expDate} /></td>
+                                <td><StatusBadge status={b.status} /></td>
+                                <td>
+                                    {b.qrCodeData ? (
+                                        <button onClick={() => setSelectedBatch(b)} style={{
+                                            display: 'inline-flex', alignItems: 'center', gap: 5,
+                                            fontSize: 12, fontWeight: 600, color: '#6366f1',
+                                            background: '#ede9fe', border: 'none', borderRadius: 7,
+                                            padding: '5px 10px', cursor: 'pointer'
+                                        }}>
+                                            <QrCode size={13} /> View QR
+                                        </button>
+                                    ) : <span style={{ color: '#c7d2fe', fontSize: 12 }}>—</span>}
+                                </td>
+                                <td style={{ minWidth: 160 }}>
+                                    <Select value={b.status} onValueChange={val => updateStatus(b._id, val)}>
+                                        <SelectTrigger data-size="sm"><SelectValue /></SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="In Production">In Production</SelectItem>
-                                            <SelectItem value="Quality Check">Quality Check</SelectItem>
-                                            <SelectItem value="Released">Released</SelectItem>
-                                            <SelectItem value="Shipped">Shipped</SelectItem>
+                                            {Object.keys(STATUS_CONFIG).map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                                         </SelectContent>
                                     </Select>
                                 </td>
                             </tr>
                         ))}
-                        {batches.length === 0 && <tr><td colSpan="8" className="empty-table">No batches created yet</td></tr>}
+                        {filtered.length === 0 && (
+                            <tr>
+                                <td colSpan={8} style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
+                                    <Layers size={28} style={{ margin: '0 auto 8px', display: 'block', opacity: 0.3 }} />
+                                    {search || filterStatus ? 'No batches match your filter' : 'No batches created yet'}
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
 
-            {/* QR Code Modal */}
-            {/* QR Code Modal */}
-            <Modal open={!!selectedBatch} setOpen={(open) => !open && setSelectedBatch(null)}>
+            {/* QR Modal */}
+            <Modal open={!!selectedBatch} setOpen={open => !open && setSelectedBatch(null)}>
                 <ModalBody>
                     <ModalContent className="items-center text-center max-w-[400px]">
                         {selectedBatch && (
                             <>
-                                <h3 className="text-xl font-bold mb-4">QR Code — {selectedBatch.batchId}</h3>
-                                <div className="qr-container mx-auto mb-6 bg-white p-4 rounded-xl inline-block shadow-lg">
-                                    <img src={selectedBatch.qrCodeData} alt="QR Code" className="w-48 h-48 max-w-none" />
+                                <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 4 }}>QR Code</h3>
+                                <p style={{ fontSize: 12, color: '#94a3b8', marginBottom: 20 }}>{selectedBatch.batchId} — {selectedBatch.productId?.name}</p>
+                                <div style={{ background: '#fff', padding: 16, borderRadius: 16, border: '1px solid #e2e8f0', display: 'inline-block', marginBottom: 20, boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}>
+                                    <img src={selectedBatch.qrCodeData} alt="QR Code" style={{ width: 180, height: 180, display: 'block' }} />
                                 </div>
-                                <div className="qr-details text-sm text-left grid grid-cols-2 gap-4 w-full mb-6 p-4 rounded-lg" style={{ background: 'var(--clay-surface)', border: '1px solid var(--clay-border)' }}>
-                                    <p><span className="block mb-1 text-secondary-color">Product</span><span className="font-medium">{selectedBatch.productId?.name}</span></p>
-                                    <p><span className="block mb-1 text-secondary-color">Quantity</span><span className="font-medium">{selectedBatch.quantityProduced?.toLocaleString()}</span></p>
-                                    <p><span className="block mb-1 text-secondary-color">Mfg Date</span><span className="font-medium">{new Date(selectedBatch.mfgDate).toLocaleDateString()}</span></p>
-                                    <p><span className="block mb-1 text-secondary-color">Exp Date</span><span className="font-medium">{new Date(selectedBatch.expDate).toLocaleDateString()}</span></p>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, width: '100%', marginBottom: 20, background: '#f8fafc', borderRadius: 12, padding: 16, border: '1px solid #e2e8f0' }}>
+                                    {[
+                                        ['Product', selectedBatch.productId?.name],
+                                        ['Quantity', selectedBatch.quantityProduced?.toLocaleString()],
+                                        ['Mfg Date', new Date(selectedBatch.mfgDate).toLocaleDateString()],
+                                        ['Exp Date', new Date(selectedBatch.expDate).toLocaleDateString()],
+                                    ].map(([label, value]) => (
+                                        <div key={label} style={{ textAlign: 'left' }}>
+                                            <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
+                                            <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', marginTop: 2 }}>{value}</div>
+                                        </div>
+                                    ))}
                                 </div>
-                                <ModalFooter className="flex justify-center w-full mt-2" style={{ background: 'transparent', border: 'none' }}>
-                                    <button className="btn btn-ghost w-full" onClick={() => setSelectedBatch(null)}>Close</button>
+                                <ModalFooter style={{ background: 'transparent', border: 'none', width: '100%' }}>
+                                    <button className="btn btn-ghost" style={{ width: '100%' }} onClick={() => setSelectedBatch(null)}>Close</button>
                                 </ModalFooter>
                             </>
                         )}
