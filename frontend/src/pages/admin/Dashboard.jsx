@@ -45,7 +45,7 @@ export default function Dashboard() {
                 API.get('/raw-materials/alerts'),
                 API.get('/batches/expiring'),
                 API.get('/products'),
-                API.get('/batches'),
+                API.get(`/batches${params}`),
             ];
             const [statsRes, alertsRes, expiringRes, productsRes, batchesRes] = await Promise.all(calls);
             setStats(statsRes.data);

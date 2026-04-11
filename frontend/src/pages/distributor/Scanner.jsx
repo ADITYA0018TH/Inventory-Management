@@ -18,12 +18,27 @@ export default function Scanner() {
         setChain(null);
         setChainBlocks([]);
         try {
-            const { Html5Qrcode } = await import('html5-qrcode');
+            const { Html5Qrcode, Html5QrcodeSupportedFormats } = await import('html5-qrcode');
             const scanner = new Html5Qrcode('qr-reader');
             html5QrCodeRef.current = scanner;
+
+            // Support both QR codes AND common barcode formats
+            const formatsToSupport = [
+                Html5QrcodeSupportedFormats.QR_CODE,
+                Html5QrcodeSupportedFormats.CODE_128,
+                Html5QrcodeSupportedFormats.CODE_39,
+                Html5QrcodeSupportedFormats.EAN_13,
+                Html5QrcodeSupportedFormats.EAN_8,
+                Html5QrcodeSupportedFormats.DATA_MATRIX,
+            ];
+
             await scanner.start(
                 { facingMode: 'environment' },
-                { fps: 10, qrbox: { width: 250, height: 250 } },
+                {
+                    fps: 10,
+                    qrbox: { width: 280, height: 180 }, // wider box for barcodes
+                    formatsToSupport,
+                },
                 async (decodedText) => {
                     await scanner.stop();
                     setScanning(false);
@@ -104,9 +119,14 @@ export default function Scanner() {
                                 <Camera size={32} />
                             </div>
                             <h3 style={{ marginBottom: 6 }}>Verify Batch Authenticity</h3>
-                            <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 20 }}>
-                                Use your camera to scan the QR code on the product packaging
+                            <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8 }}>
+                                Use your camera to scan the QR code or barcode on the product packaging
                             </p>
+                            <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginBottom: 20, flexWrap: 'wrap' }}>
+                                {['QR Code', 'Code 128', 'Code 39', 'EAN-13', 'EAN-8', 'Data Matrix'].map(f => (
+                                    <span key={f} style={{ fontSize: 10, fontWeight: 600, padding: '3px 8px', borderRadius: 6, background: '#ede9fe', color: '#6366f1' }}>{f}</span>
+                                ))}
+                            </div>
                             <button className="btn btn-primary" onClick={startScanner} style={{ marginBottom: 20 }}>
                                 <Camera size={16} /> Start Camera Scanner
                             </button>

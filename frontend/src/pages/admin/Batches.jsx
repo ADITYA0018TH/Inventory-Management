@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import API, { getBaseURL } from '../../api';
-import { Plus, Download, X, Layers, CheckCircle, Truck, FlaskConical, QrCode, AlertCircle } from 'lucide-react';
+import { Plus, Download, X, Layers, CheckCircle, Truck, FlaskConical, QrCode, AlertCircle, Printer } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
@@ -41,6 +41,7 @@ export default function Batches() {
     const [showForm, setShowForm] = useState(false);
     const [form, setForm] = useState({ batchId: '', productId: '', quantityProduced: '', mfgDate: '', expDate: '' });
     const [selectedBatch, setSelectedBatch] = useState(null);
+    const [printBatch, setPrintBatch] = useState(null);
     const [search, setSearch] = useState('');
     const [filterStatus, setFilterStatus] = useState('');
 
@@ -204,14 +205,24 @@ export default function Batches() {
                                 <td><StatusBadge status={b.status} /></td>
                                 <td>
                                     {b.qrCodeData ? (
-                                        <button onClick={() => setSelectedBatch(b)} style={{
-                                            display: 'inline-flex', alignItems: 'center', gap: 5,
-                                            fontSize: 12, fontWeight: 600, color: '#6366f1',
-                                            background: '#ede9fe', border: 'none', borderRadius: 7,
-                                            padding: '5px 10px', cursor: 'pointer'
-                                        }}>
-                                            <QrCode size={13} /> View QR
-                                        </button>
+                                        <div style={{ display: 'flex', gap: 5 }}>
+                                            <button onClick={() => setSelectedBatch(b)} style={{
+                                                display: 'inline-flex', alignItems: 'center', gap: 5,
+                                                fontSize: 12, fontWeight: 600, color: '#6366f1',
+                                                background: '#ede9fe', border: 'none', borderRadius: 7,
+                                                padding: '5px 10px', cursor: 'pointer'
+                                            }}>
+                                                <QrCode size={13} /> View QR
+                                            </button>
+                                            <button onClick={() => setPrintBatch(b)} style={{
+                                                display: 'inline-flex', alignItems: 'center', gap: 5,
+                                                fontSize: 12, fontWeight: 600, color: '#10b981',
+                                                background: '#d1fae5', border: 'none', borderRadius: 7,
+                                                padding: '5px 10px', cursor: 'pointer'
+                                            }}>
+                                                <Printer size={13} /> Label
+                                            </button>
+                                        </div>
                                     ) : <span style={{ color: '#c7d2fe', fontSize: 12 }}>—</span>}
                                 </td>
                                 <td style={{ minWidth: 160 }}>
@@ -235,6 +246,57 @@ export default function Batches() {
                     </tbody>
                 </table>
             </div>
+
+            {/* Print Label Modal */}
+            {printBatch && (
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}
+                    onClick={() => setPrintBatch(null)}>
+                    <div style={{ background: '#fff', borderRadius: 16, padding: 32, width: 380, boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}
+                        onClick={e => e.stopPropagation()}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                            <h3 style={{ fontSize: 16, fontWeight: 700 }}>Batch Label</h3>
+                            <div style={{ display: 'flex', gap: 8 }}>
+                                <button onClick={() => window.print()} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, padding: '7px 14px', borderRadius: 8, background: '#6366f1', color: '#fff', border: 'none', cursor: 'pointer' }}>
+                                    <Printer size={13} /> Print
+                                </button>
+                                <button onClick={() => setPrintBatch(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}><X size={18} /></button>
+                            </div>
+                        </div>
+
+                        {/* Label preview — this is what gets printed */}
+                        <div id="batch-label" style={{ border: '2px solid #0f172a', borderRadius: 12, padding: 20, fontFamily: 'monospace' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+                                <div>
+                                    <div style={{ fontSize: 10, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em' }}>PharmaLink</div>
+                                    <div style={{ fontSize: 18, fontWeight: 900, color: '#0f172a', marginTop: 2 }}>{printBatch.batchId}</div>
+                                    <div style={{ fontSize: 13, fontWeight: 600, color: '#475569', marginTop: 2 }}>{printBatch.productId?.name}</div>
+                                    <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 1 }}>{printBatch.productId?.type} · SKU: {printBatch.productId?.sku}</div>
+                                </div>
+                                {printBatch.qrCodeData && (
+                                    <img src={printBatch.qrCodeData} alt="QR" style={{ width: 80, height: 80, border: '1px solid #e2e8f0', borderRadius: 6, padding: 4, background: '#fff' }} />
+                                )}
+                            </div>
+                            <div style={{ height: 1, background: '#e2e8f0', marginBottom: 12 }} />
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                                {[
+                                    ['Qty Produced', `${printBatch.quantityProduced?.toLocaleString()} units`],
+                                    ['Status', printBatch.status],
+                                    ['Mfg Date', new Date(printBatch.mfgDate).toLocaleDateString()],
+                                    ['Exp Date', new Date(printBatch.expDate).toLocaleDateString()],
+                                ].map(([label, value]) => (
+                                    <div key={label}>
+                                        <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</div>
+                                        <div style={{ fontSize: 12, fontWeight: 700, color: '#0f172a', marginTop: 1 }}>{value}</div>
+                                    </div>
+                                ))}
+                            </div>
+                            <div style={{ marginTop: 12, fontSize: 9, color: '#94a3b8', textAlign: 'center' }}>
+                                Scan QR code to verify authenticity · PharmaLink Supply Chain
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* QR Modal */}
             <Modal open={!!selectedBatch} setOpen={open => !open && setSelectedBatch(null)}>

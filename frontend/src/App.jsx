@@ -25,6 +25,7 @@ import Compliance from './pages/admin/Compliance';
 import Forecasting from './pages/admin/Forecasting';
 import PurchaseOrders from './pages/admin/PurchaseOrders';
 import Warehouses from './pages/admin/Warehouses';
+import SearchResults from './pages/admin/SearchResults';
 
 import Catalog from './pages/distributor/Catalog';
 import DistributorOrders from './pages/distributor/Orders';
@@ -78,6 +79,7 @@ function AppRoutes() {
         <Route path="forecasting" element={<Forecasting />} />
         <Route path="purchase-orders" element={<PurchaseOrders />} />
         <Route path="warehouses" element={<Warehouses />} />
+        <Route path="search" element={<SearchResults />} />
       </Route>
 
       {/* Distributor Routes */}

@@ -13,10 +13,17 @@ function generateHash(data) {
     return crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex');
 }
 
-// GET all batches
+// GET all batches — supports ?days= filter
 router.get('/', auth, async (req, res) => {
     try {
-        const batches = await Batch.find().populate('productId', 'name type sku').sort({ mfgDate: -1 });
+        const { days } = req.query;
+        let filter = {};
+        if (days && parseInt(days) > 0) {
+            const since = new Date();
+            since.setDate(since.getDate() - parseInt(days));
+            filter.mfgDate = { $gte: since };
+        }
+        const batches = await Batch.find(filter).populate('productId', 'name type sku').sort({ mfgDate: -1 });
         res.json(batches);
     } catch (err) {
         res.status(500).json({ message: 'Server error', error: err.message });
