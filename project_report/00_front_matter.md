@@ -121,6 +121,7 @@ Keywords: Pharmaceutical Supply Chain Management, Inventory Management, Full-Sta
 | | Table of Contents | vii |
 | | List of Abbreviations | viii |
 | | List of Figures | ix |
+| | List of Tables | x |
 | | Chapter 1: Introduction | 01-03 |
 | | Chapter 2: Aim and Objectives of the Project | 04-07 |
 | | Chapter 3: Review of Literature / Technology Review | 08-24 |
@@ -192,6 +193,30 @@ Keywords: Pharmaceutical Supply Chain Management, Inventory Management, Full-Sta
 | Figure 13.0 | Inventory Management Module Screenshot | 44 |
 | Figure 14.0 | Batch Management & QR Traceability Screenshot | 44 |
 | Figure 15.0 | Real-Time Messaging Interface Screenshot | 44 |
+
+---
+
+# PAGE x — LIST OF TABLES
+
+| Table No. | Table Title | Page No. |
+|---|---|---|
+| Table 1.0 | PharmaLink Project Development Plan | 07 |
+| Table 2.0 | PharmaLink Module Implementation Status | 38 |
+| Table 3.0 | Compliance Score Calculation Formula | 37 |
+| Table 4.0 | PharmaLink Test Case Summary | 43 |
+| Table 5.0 | PharmaLink REST API Endpoint Reference | 47 |
+| Table 6.0 | PharmaLink System Performance Metrics | 43 |
+| Table 7.0 | User Collection — Data Structure | 27 |
+| Table 8.0 | Product Collection — Data Structure | 27 |
+| Table 9.0 | Batch Collection — Data Structure | 28 |
+| Table 10.0 | Order Collection — Data Structure | 28 |
+| Table 11.0 | Purchase Order Collection — Data Structure | 29 |
+| Table 12.0 | Quality Check Collection — Data Structure | 29 |
+| Table 13.0 | Supplier Collection — Data Structure | 30 |
+| Table 14.0 | Warehouse & WarehouseStock Data Structures | 30 |
+| Table 15.0 | Audit Log Collection — Data Structure | 31 |
+| Table 16.0 | Notification Collection — Data Structure | 31 |
+| Table 17.0 | Software Selection Summary | 35 |
 
 ---
 
