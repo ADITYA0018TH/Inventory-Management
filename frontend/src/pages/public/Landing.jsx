@@ -6,7 +6,6 @@ import {
     QrCode, BarChart3, Bell, FileText, Truck, RotateCcw, CheckCircle,
     ArrowRight, Zap, Lock, MapPin, Mail, ArrowUp, Github, Twitter, Linkedin
 } from 'lucide-react';
-import { AuroraText } from "@/components/ui/aurora-text"
 import { DiaTextReveal } from "@/components/ui/dia-text-reveal"
 import { Highlighter } from "@/components/ui/highlighter"
 
