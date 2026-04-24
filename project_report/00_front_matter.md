@@ -68,21 +68,17 @@ Parul Institute of Technology, Parul University
 
 I would like to express my sincere gratitude to everyone who has contributed to the successful completion of my project, PharmaLink — Advanced Inventory & Supply Chain Management.
 
-Firstly, I extend my deepest appreciation to my Internal Guide and professors at Parul Institute of Technology, whose guidance, encouragement, and technical expertise have been invaluable throughout this project. Their insightful feedback and continuous support helped me refine my approach, resolve technical challenges, and improve the overall quality of my work at every stage of development.
+First and foremost, I extend my deepest appreciation to my Internal Guide at Parul Institute of Technology, whose guidance, encouragement, and technical expertise were invaluable throughout this project. Their insightful feedback and continuous support helped me refine my approach, overcome technical challenges, and significantly improve the overall quality of my work at every stage of development.
 
-I would also like to thank the Department of Computer Science and Engineering and the faculty members of Parul Institute of Technology for providing me with the necessary resources, knowledge, and a conducive learning environment. The strong foundation in software engineering, database systems, web development, and system design provided through the curriculum directly enabled me to design and implement a complex, multi-module full-stack application.
+I would also like to thank the Department of Computer Science and Engineering and the faculty members of Parul Institute of Technology for providing the necessary resources, knowledge, and a conducive learning environment. The strong academic foundation in software engineering, database systems, web development, and system design provided through the curriculum directly enabled me to design and implement this complex, multi-module full-stack application.
 
-A special thanks to my friends and colleagues for their continuous motivation, constructive discussions, and collaborative problem-solving sessions. Their shared enthusiasm for technology and their willingness to review and test the application contributed meaningfully to the quality of the final system.
+A special thanks to my friends and colleagues for their continuous motivation, constructive discussions, and collaborative problem-solving. Their enthusiasm and willingness to review and test the application contributed meaningfully to the quality of the final system. I am also deeply grateful to my family for their unwavering support, patience, and encouragement throughout this journey — their belief in me has been a constant driving force behind my dedication to this project.
 
-I am also grateful to the open-source community behind the technologies used in this project — React.js, Node.js, Express.js, MongoDB, Socket.IO, Tailwind CSS, and the many npm packages that form the backbone of PharmaLink. The comprehensive documentation, community forums, and open-source contributions made it possible to build a production-quality system within an academic timeline.
-
-Lastly, I am deeply grateful to my family for their unwavering support, patience, and encouragement throughout this journey. Their belief in my abilities has been a constant driving force behind my dedication and commitment to this project.
-
-This project has been an extraordinary learning experience, allowing me to apply full-stack web development, real-time systems, database design, and security architecture to a real-world pharmaceutical supply chain problem. I hope that PharmaLink will serve as a meaningful contribution to the digitization of pharmaceutical operations and demonstrate the practical value of modern web technologies in solving complex industry challenges.
+This project has been an incredible learning experience, allowing me to apply full-stack web development, real-time systems, database design, and security architecture to a real-world pharmaceutical supply chain problem. I hope PharmaLink serves as a meaningful contribution toward the digitization of pharmaceutical operations.
 
 Aditya Raj
 Enrollment No: 2203051050671
-B.E. Computer Science and Engineering
+B.Tech. Computer Science and Engineering
 Parul Institute of Technology, Parul University
 AY 2025-26
 
@@ -96,15 +92,13 @@ AY 2025-26
 
 # PAGE vi — ABSTRACT
 
-This report presents PharmaLink — Advanced Inventory & Supply Chain Management, a comprehensive full-stack web application designed to digitize and automate pharmaceutical inventory and supply chain operations. The system addresses the critical limitations of traditional pharmaceutical management methods — manual inventory tracking, disconnected procurement workflows, absence of batch-level traceability, weak compliance monitoring, and lack of real-time visibility — by providing a single integrated platform that manages the complete lifecycle of pharmaceutical products from raw material procurement through batch manufacturing, quality control, warehouse storage, distribution, and compliance reporting.
+PharmaLink — Advanced Inventory & Supply Chain Management is a full-stack web application that digitizes and automates pharmaceutical supply chain operations. It replaces manual, disconnected systems with a single integrated platform covering the complete product lifecycle — from raw material procurement and batch manufacturing through quality control, warehouse storage, distribution, and compliance reporting.
 
-The project employs React.js v19 with Vite and Tailwind CSS v4 for the frontend, Node.js and Express.js for the RESTful API backend, and MongoDB with Mongoose for data persistence. Real-time communication is implemented via Socket.IO, enabling instant messaging between users and automated notification delivery for critical supply chain events. The system implements multi-layer security through JWT-based authentication, bcrypt password hashing, and Time-based One-Time Password (TOTP) Two-Factor Authentication via Speakeasy. Role-based access control enforces distinct permissions for Admin and Distributor user roles at both the frontend routing and backend API middleware levels.
+The system is built using React.js v19, Node.js, Express.js, and MongoDB, with Socket.IO for real-time messaging and notifications. Security is implemented through JWT authentication, bcrypt password hashing, and TOTP-based Two-Factor Authentication via Speakeasy. Role-based access control supports four user roles: Admin, Distributor, Quality Inspector, and Warehouse Manager.
 
-The platform comprises 17 functional modules including Product & Batch Management, Purchase Order Processing, Supplier Management, Quality Control, Product Recall Management, Returns Processing, Expiry Intelligence, Demand Forecasting, Storage Compliance, Compliance Snapshot generation, Audit Logging, Real-Time Messaging, Notifications, and interactive Dashboard Analytics. Data visualization is implemented using Recharts, providing interactive bar charts, pie charts, and area charts for KPI monitoring. Exportable PDF reports (via PDFKit) and CSV exports (via json2csv) support offline analysis and regulatory submissions. QR code generation (server-side via the qrcode library) and browser-based QR scanning (via html5-qrcode) enable hardware-free batch traceability throughout the supply chain.
+The platform includes 17 functional modules covering inventory management, purchase orders, supplier management, quality control, product recalls, expiry intelligence, demand forecasting, storage compliance, audit logging, and dashboard analytics. PDF and CSV report exports, QR code generation, and browser-based QR scanning are also supported. An automated daily compliance snapshot calculates a weighted composite score across five metrics to ensure continuous audit readiness. All 17 modules were successfully implemented and all 12 formal test cases passed.
 
-The automated daily compliance snapshot system calculates a composite compliance score across five weighted metrics — Batch Testing Rate (25%), Expiry Score (20%), Storage Score (25%), Recall Completion Rate (15%), and Order Fulfillment Rate (15%) — ensuring continuous, audit-ready compliance documentation without manual effort. All 17 modules were successfully implemented and verified through comprehensive end-to-end testing, with all 12 formal test cases passing without critical failures.
-
-Keywords: Pharmaceutical Supply Chain Management, Inventory Management, Full-Stack Web Application, React.js, Node.js, MongoDB, Socket.IO, Role-Based Access Control, JWT Authentication, Two-Factor Authentication, Real-Time Notifications, Compliance Monitoring, Batch Traceability, QR Code, Demand Forecasting, Expiry Intelligence, Audit Log, REST API
+Keywords: Pharmaceutical Supply Chain, Inventory Management, React.js, Node.js, MongoDB, Socket.IO, JWT, Role-Based Access Control, QR Code Traceability, Compliance Monitoring, REST API.
 
 ---
 
