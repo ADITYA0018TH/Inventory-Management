@@ -7,16 +7,28 @@ import SessionTimeout from '../common/SessionTimeout';
 import { Menu as FiMenu } from 'lucide-react';
 
 export default function Layout() {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(false);
+
+    const SIDEBAR_WIDTH = isCollapsed ? 64 : 260;
 
     return (
         <div className="app-layout">
-            <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-            <div className="main-wrapper">
+            <Sidebar
+                isOpen={isMobileOpen}
+                onClose={() => setIsMobileOpen(false)}
+                isCollapsed={isCollapsed}
+                onToggleCollapse={() => setIsCollapsed(prev => !prev)}
+            />
+            <div
+                className="main-wrapper"
+                style={{ marginLeft: SIDEBAR_WIDTH, transition: 'margin-left 0.25s ease' }}
+            >
                 <header className="top-bar">
+                    {/* Mobile hamburger */}
                     <button
                         className="mobile-toggle"
-                        onClick={() => setIsSidebarOpen((prev) => !prev)}
+                        onClick={() => setIsMobileOpen(prev => !prev)}
                         aria-label="Toggle sidebar"
                     >
                         <FiMenu />

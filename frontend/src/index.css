@@ -2147,6 +2147,11 @@ body {
     display: none;
 }
 
+/* ========== SIDEBAR CLOSE BUTTON (hidden on desktop) ========== */
+.sidebar-close-btn {
+    display: none !important;
+}
+
 /* ========== MOBILE RESPONSIVE ========== */
 @media (max-width: 768px) {
     .app-layout {
@@ -2155,15 +2160,20 @@ body {
 
     /* Sidebar hidden off-screen by default on mobile */
     .sidebar {
-        left: -280px;
-        z-index: 1001;
-        box-shadow: none;
+        left: -280px !important;
+        z-index: 1001 !important;
+        box-shadow: none !important;
     }
 
     /* Sidebar slides in when open */
     .sidebar.open {
-        left: 0;
-        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.18);
+        left: 0 !important;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.18) !important;
+    }
+
+    /* Show close button on mobile */
+    .sidebar-close-btn {
+        display: flex !important;
     }
 
     /* Dark overlay — hidden by default */
