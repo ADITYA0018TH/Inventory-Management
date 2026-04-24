@@ -305,6 +305,7 @@ body {
     display: flex;
     flex-direction: column;
     z-index: 100;
+    transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-header {
@@ -2120,52 +2121,107 @@ body {
     }
 }
 
-/* MOBILE RESPONSIVE */
+/* ========== MOBILE TOGGLE (hidden on desktop) ========== */
+.mobile-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.mobile-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* ========== SIDEBAR OVERLAY (hidden on desktop) ========== */
+.sidebar-overlay {
+    display: none;
+}
+
+/* ========== MOBILE RESPONSIVE ========== */
 @media (max-width: 768px) {
     .app-layout {
         flex-direction: column;
     }
 
+    /* Sidebar hidden off-screen by default on mobile */
     .sidebar {
-        position: fixed;
-        left: -260px;
-        top: 0;
-        bottom: 0;
-        z-index: 1000;
-        transition: left 0.3s ease;
+        left: -280px;
+        z-index: 1001;
+        box-shadow: none;
     }
 
+    /* Sidebar slides in when open */
     .sidebar.open {
         left: 0;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.18);
     }
 
+    /* Dark overlay — hidden by default */
     .sidebar-overlay {
+        display: block;
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 900;
-        display: none;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.28s ease;
     }
 
-    .sidebar.open+.sidebar-overlay {
-        display: block;
+    /* Overlay visible when sidebar is open */
+    .sidebar-overlay.open {
+        opacity: 1;
+        pointer-events: all;
     }
 
+    /* Main content takes full width */
     .main-wrapper {
-        margin-left: 0;
+        margin-left: 0 !important;
         width: 100%;
     }
 
-    .stats-grid {
-        grid-template-columns: 1fr;
+    /* Show hamburger button */
+    .mobile-toggle {
+        display: flex;
     }
 
+    /* Stack stat cards 2 per row */
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    /* Stack dashboard charts */
     .dashboard-grid {
         grid-template-columns: 1fr;
     }
 
-    .mobile-toggle {
-        display: block;
+    /* Stack form rows */
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    /* Reduce main content padding */
+    .main-content {
+        padding: 16px;
+    }
+
+    /* Tables scroll horizontally */
+    .card {
+        overflow-x: auto;
+    }
+
+    .data-table {
+        min-width: 600px;
     }
 }
 
