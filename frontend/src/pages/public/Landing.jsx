@@ -6,6 +6,9 @@ import {
     QrCode, BarChart3, Bell, FileText, Truck, RotateCcw, CheckCircle,
     ArrowRight, Zap, Lock, MapPin, Mail, ArrowUp, Github, Twitter, Linkedin
 } from 'lucide-react';
+import { AuroraText } from "@/components/ui/aurora-text"
+import { DiaTextReveal } from "@/components/ui/dia-text-reveal"
+import { Highlighter } from "@/components/ui/highlighter"
 
 // ── Mock UI Components ──────────────────────────────────────────────────────
 
@@ -299,9 +302,11 @@ export default function Landing() {
             {/* NAV */}
             <nav className="landing-nav">
                 <div className="landing-nav-inner">
-                    <div className="landing-nav-logo">
-                        <img src="/logo.svg" alt="PharmaLink" className="bg-white rounded-lg p-1" style={{ width: 36, height: 36 }} />
-                        <span>PharmaLink</span>
+                    <div className="landing-nav-brand">
+                        <div className="bg-white rounded-xl flex items-center justify-center" style={{ width: 44, height: 44 }}>
+                            <img src="/logo.svg" alt="PharmaLink" style={{ width: 26, height: 26, objectFit: 'contain' }} />
+                        </div>
+                        <span className="landing-brand-text">PharmaLink</span>
                     </div>
                     <div className="landing-nav-links">
                         <a href="#features">Features</a>
@@ -366,7 +371,7 @@ export default function Landing() {
             {/* FEATURES */}
             <section className="landing-features" id="features">
                 <div className="landing-section-label">Features</div>
-                <h2 className="landing-section-title">Everything your pharma supply chain needs</h2>
+                <h2 className="landing-section-title"><DiaTextReveal text="Everything your pharma supply chain needs" /></h2>
                 <p className="landing-section-sub">
                     Built for small and medium pharmaceutical manufacturers who need enterprise-grade tools without enterprise-grade cost.
                 </p>
@@ -392,7 +397,7 @@ export default function Landing() {
             {/* TECH STACK */}
             <section className="landing-tech" id="tech">
                 <div className="landing-section-label">Tech Stack</div>
-                <h2 className="landing-section-title">Built on modern, proven technologies</h2>
+                <h2 className="landing-section-title">Built on <Highlighter action="highlight" color="#440bffff">modern, proven</Highlighter> technologies</h2>
                 <div className="landing-tech-grid">
                     {[
                         { name: 'React 19', role: 'Frontend', color: '#06b6d4' },
@@ -435,7 +440,9 @@ export default function Landing() {
                     {/* Brand col */}
                     <div className="lf-col">
                         <div className="lf-brand">
-                            <img src="/logo.svg" alt="PharmaLink" className="bg-white rounded-lg p-1" style={{ width: 36, height: 36 }} />
+                            <div className="bg-white rounded-xl flex items-center justify-center" style={{ width: 48, height: 48 }}>
+                                <img src="/logo.svg" alt="PharmaLink" style={{ width: 28, height: 28, objectFit: 'fit' }} />
+                            </div>
                             <span className="lf-brand-name">PharmaLink</span>
                         </div>
                         <p className="lf-brand-desc">AI-powered pharmaceutical supply chain management. Built for manufacturers and distributors who need enterprise-grade tools without enterprise cost.</p>
@@ -489,7 +496,7 @@ export default function Landing() {
                         <div className="lf-contact">
                             <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" className="lf-contact-item">
                                 <MapPin size={14} className="lf-contact-icon" />
-                                <span>Vadodara, Gujarat, India</span>
+                                <span>Patna, Bihar, India</span>
                             </a>
                             <a href="mailto:support@pharmalink.com" className="lf-contact-item">
                                 <Mail size={14} className="lf-contact-icon" />

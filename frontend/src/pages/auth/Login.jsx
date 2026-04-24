@@ -31,8 +31,8 @@ export default function Login() {
             toast.success(`Welcome back, ${user.name}!`);
             const home = user.role === 'admin' ? '/admin/dashboard'
                 : user.role === 'quality_inspector' ? '/admin/quality'
-                : user.role === 'warehouse_manager' ? '/admin/storage'
-                : '/distributor/catalog';
+                    : user.role === 'warehouse_manager' ? '/admin/storage'
+                        : '/distributor/catalog';
             navigate(home);
         } catch (err) {
             toast.error(err.response?.data?.message || 'Login failed');
@@ -67,16 +67,16 @@ export default function Login() {
                     </div>
                     <div className="auth-features">
                         <div className="feature-item">
-                            <span><Box className='text-white'/></span><span>Track Raw Materials & Inventory</span>
+                            <span><Box className='text-white' /></span><span>Track Raw Materials & Inventory</span>
                         </div>
                         <div className="feature-item">
-                            <span><Factory className='text-white'/></span><span>Batch Manufacturing with Formula Logic</span>
+                            <span><Factory className='text-white' /></span><span>Batch Manufacturing with Formula Logic</span>
                         </div>
                         <div className="feature-item">
-                            <span><Smartphone className='text-white'/></span><span>QR Code Based Track & Trace</span>
+                            <span><Smartphone className='text-white' /></span><span>QR Code Based Track & Trace</span>
                         </div>
                         <div className="feature-item">
-                            <span><ShoppingCart className='text-white'/></span><span>Distributor Ordering System</span>
+                            <span><ShoppingCart className='text-white' /></span><span>Distributor Ordering System</span>
                         </div>
                     </div>
                 </div>
